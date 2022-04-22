@@ -27,7 +27,7 @@ class Play extends Phaser.Scene {
         this.JUMP_VELOCITY = -700;
         this.MAX_JUMPS = 1;
         this.SCROLL_SPEED = 4;
-        currentScene = 3;
+        this.counter =0;
         this.physics.world.gravity.y = 2600;
         cursors = this.input.keyboard.createCursorKeys();
         this.sky=this.add.tileSprite(0,0, game.config.width, game.config.height, 'Sky').setOrigin(0);
@@ -41,11 +41,14 @@ class Play extends Phaser.Scene {
         this.groundScroll = this.add.tileSprite(0, game.config.height-tileSize, game.config.width, tileSize, 'ground').setOrigin(0);
        
         this.player = this.physics.add.sprite(120, game.config.height/2-tileSize, 'player').setScale(SCALE);
+        
         this.block = this.physics.add.sprite(360, game.config.height/2-tileSize, 'block').setScale(SCALE);
         this.block.body.setAllowGravity(true).setVelocityX(-200);
-        this.physics.add.collider(this.player, this.ground);
-        this.physics.add.collider(this.block,this.ground)
         
+        this.physics.add.collider(this.player, this.ground);
+        this.physics.add.collider(this.block,this.ground);
+        this.physics.add.overlap(this.player,this.block,this.blockdestory,null,this);//counter dosent work
+        //this.addblock()
     }
     update() {
         // update tile sprites (tweak for more "speed")
@@ -84,9 +87,22 @@ class Play extends Phaser.Scene {
 	    	this.jumps--;
 	    	this.jumping = false;
 	    }
+        
         if(Phaser.Input.Keyboard.JustDown(keyENTER)){
             this.scene.start("GameOver");    
         }
+    }
+    blockdestory(player,block){//destory block when it is touch
+        block.destroy();
+       this.destroy=true;
+    }
+    addblock(){//trying to create a new block after it is destory
+        this.destroy=false
+        if (this.destory=true){
+            this.block = this.physics.add.sprite(360, game.config.height/2-tileSize, 'block').setScale(SCALE);
+            this.block.body.setAllowGravity(true).setVelocityX(-200);
+        }
+        
     }
     checkCollision(player, block) {
         // simple AABB checking
@@ -99,5 +115,6 @@ class Play extends Phaser.Scene {
             return false;
         }
     }
+    
     
 }
