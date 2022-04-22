@@ -15,6 +15,7 @@ class Play extends Phaser.Scene {
         this.load.image("Mountains",'Mountains.png');
         this.load.image("Sky",'Sky.png');
         this.load.image("Snow",'Snow.png');
+        this.load.image("ground",'ground.png');
 
     }
     create(){
@@ -24,15 +25,15 @@ class Play extends Phaser.Scene {
         currentScene = 3;
         this.physics.world.gravity.y = 2600;
         cursors = this.input.keyboard.createCursorKeys();
-     this.sky=this.add.tileSprite(0,0, game.config.width, game.config.height, 'Sky').setOrigin(0);
+        this.sky=this.add.tileSprite(0,0, game.config.width, game.config.height, 'Sky').setOrigin(0);
      this.ground = this.add.group();
         for(let i = 0; i < game.config.width; i += tileSize) {
-            let groundTile = this.physics.add.sprite(i, game.config.height - tileSize, 'platformer_atlas', 'block').setScale(SCALE).setOrigin(0);
+            let groundTile = this.physics.add.sprite(i, game.config.height - tileSize, 'ground', 'block').setScale(SCALE).setOrigin(0);
             groundTile.body.immovable = true;
             groundTile.body.allowGravity = false;
             this.ground.add(groundTile);
         }
-        this.groundScroll = this.add.tileSprite(0, game.config.height-tileSize, game.config.width, tileSize, 'Ground_02').setOrigin(0);
+        this.groundScroll = this.add.tileSprite(0, game.config.height-tileSize, game.config.width, tileSize, 'ground').setOrigin(0);
         this.player = this.physics.add.sprite(120, game.config.height/2-tileSize, 'player', 'side').setScale(SCALE);
         this.physics.add.collider(this.player, this.ground);
     }
@@ -45,7 +46,7 @@ class Play extends Phaser.Scene {
 	    this.player.isGrounded = this.player.body.touching.down;
 	    // if so, we have jumps to spare
 	    if(this.player.isGrounded) {
-            this.player.anims.play('walk', true);
+            //this.player.anims.play('walk', true);
 	    	this.jumps = this.MAX_JUMPS;
 	    	this.jumping = false;
 	    } else {
