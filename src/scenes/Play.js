@@ -1,4 +1,5 @@
 //scene for playing
+
 class Play extends Phaser.Scene {
     constructor() {
         super("playScene");
@@ -17,73 +18,50 @@ class Play extends Phaser.Scene {
 
     }
     create(){
-        let menuConfig = {
-            fontFamily: 'Cursive',
-            fontSize: '30px',
-            backgroundImage: 'background',
-            color: 'white',
-            align: 'right',
-            padding: {
-                top: 5,
-                bottom: 5,
-            },
-            fixedWidth: 0
+        this.JUMP_VELOCITY = -700;
+        this.MAX_JUMPS = 1;
+        this.SCROLL_SPEED = 4;
+        currentScene = 3;
+        this.physics.world.gravity.y = 2600;
+        cursors = this.input.keyboard.createCursorKeys();
+     this.sky=this.add.tileSprite(0,0, game.config.width, game.config.height, 'Sky').setOrigin(0);
+     this.ground = this.add.group();
+        for(let i = 0; i < game.config.width; i += tileSize) {
+            let groundTile = this.physics.add.sprite(i, game.config.height - tileSize, 'platformer_atlas', 'block').setScale(SCALE).setOrigin(0);
+            groundTile.body.immovable = true;
+            groundTile.body.allowGravity = false;
+            this.ground.add(groundTile);
         }
-        //create ket to controll
-        keyENTER = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
-        keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
-        keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP); 
-        keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
-        keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
-        //testing scene change
-        this.add.text(20,20,"Press Enter to GameOver",menuConfig).setOrigin(0,0)
-
-        //create back ground
-        this.sky =this.add.tileSprite(0,0,800,450,'Sky').setOrigin(0,0);
-        this.Mountains =this.add.tileSprite(0,0,800,450,'Mountains').setOrigin(0,0);
-        this.Mid =this.add.tileSprite(0,0,800,450,'Middle').setOrigin(0,0);
-        this.Foreground =this.add.tileSprite(0,0,800,450,'Foreground').setOrigin(0,0);
-        this.G1 =this.add.tileSprite(0,0,800,450,'Ground_01').setOrigin(0,0);
-        this.G2=this.add.tileSprite(0,0,800,450,'Ground_02').setOrigin(0,0);
-        this.Snow=this.add.tileSprite(0,0,800,450,'Snow').setOrigin(0,0);
-        this.player = new Player(this, 20 ,60, 'player', 0, 30).setOrigin(0, 0);
-        this.block= new obstacles(this,100,300,'block,',0,20).setOrigin(0,0);
-    
+        this.groundScroll = this.add.tileSprite(0, game.config.height-tileSize, game.config.width, tileSize, 'Ground_02').setOrigin(0);
+        this.player = this.physics.add.sprite(120, game.config.height/2-tileSize, 'player', 'side').setScale(SCALE);
+        this.physics.add.collider(this.player, this.ground);
     }
-     
-     update(){
-        this.sky.tilePositionX -= 0.1;
-        this.G1.tilePositionX += 0.3;
-        this.G2.tilePositionX += 1
-        this.Mountains.tilePositionX += 1
-        this.Mid.tilePositionX += 1
-        this.Snow.tilePositionX += 3
-        this.Foreground.tilePositionX +=1;
-        this.player.update();
-      
-        if(this.checkCollision(this.player,this.block)){
-            console.log("collide");
-           
+    update() {
+        // update tile sprites (tweak for more "speed")
+        this.sky.tilePositionX += this.SCROLL_SPEED;
+        this.groundScroll.tilePositionX += this.SCROLL_SPEED;
 
-        }
-     
-
-        if(Phaser.Input.Keyboard.JustDown(keyENTER)){
-            this.scene.start("GameOver");    
-        }
+		// check if alien is grounded
+	    this.player.isGrounded = this.player.body.touching.down;
+	    // if so, we have jumps to spare
+	    if(this.player.isGrounded) {
+            this.player.anims.play('walk', true);
+	    	this.jumps = this.MAX_JUMPS;
+	    	this.jumping = false;
+	    } else {
+	    	this.player.anims.play('jump');
+	    }
+        // allow steady velocity change up to a certain key down duration
+        // see: https://photonstorm.github.io/phaser3-docs/Phaser.Input.Keyboard.html#.DownDuration__anchor
+	    if(this.jumps > 0 && Phaser.Input.Keyboard.DownDuration(cursors.up, 150)) {
+	        this.player.body.velocity.y = this.JUMP_VELOCITY;
+	        this.jumping = true;
+	       
+	    } 
+        // finally, letting go of the UP key subtracts a jump
+        // see: https://photonstorm.github.io/phaser3-docs/Phaser.Input.Keyboard.html#.UpDuration__anchor
+	   
     }
-    checkCollision(player, block) {
-        // simple AABB checking
-           
-         if (player.x < block.x + block.width && 
-            player.x + player.width > block.x && 
-            player.y < block.y + block.height &&
-            player.height + player.y > block. y) {
-                return true;
-        } else {
-            return false;
-        }
-        
-    }
+   
     
 }
