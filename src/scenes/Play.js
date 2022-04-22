@@ -45,7 +45,7 @@ class Play extends Phaser.Scene {
         this.block.body.setAllowGravity(true).setVelocityX(-200);
         this.physics.add.collider(this.player, this.ground);
         this.physics.add.collider(this.block,this.ground)
-        this.physics.add.collider(this.player, this.block);
+        
     }
     update() {
         // update tile sprites (tweak for more "speed")
@@ -55,6 +55,12 @@ class Play extends Phaser.Scene {
         if(this.block.x<0){
             this.block.x=game.config.width;
         }
+        if(this.checkCollision(this.player, this.block)) {
+            //maybe put animation??
+            //add counter
+            
+        }
+        
 		// check if alien is grounded
 	    this.player.isGrounded = this.player.body.touching.down;
 	    // if so, we have jumps to spare
@@ -82,6 +88,16 @@ class Play extends Phaser.Scene {
             this.scene.start("GameOver");    
         }
     }
-   
+    checkCollision(player, block) {
+        // simple AABB checking
+        if (player.x < block.x + block.width && 
+            player.x + player.width > block.x && 
+            player.y < block.y + block.height &&
+            player.height + player.y > block. y) {
+                return true;
+        } else {
+            return false;
+        }
+    }
     
 }
