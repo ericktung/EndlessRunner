@@ -8,13 +8,7 @@ class Play extends Phaser.Scene {
         this.load.path ='./asset/'; //set path to asset.
         this.load.image('player','player.png');
         this.load.image('block','block.png')
-        this.load.image("Foreground",'Foreground.png');
-        this.load.image("Ground_01",'Ground_01.png');
-        this.load.image("Ground_02",'Ground_02.png');
-        this.load.image("Middle",'Middle.png');
-        this.load.image("Mountains",'Mountains.png');
         this.load.image("Sky",'Sky.png');
-        this.load.image("Snow",'Snow.png');
         this.load.image("ground",'ground.png');
 
     }
