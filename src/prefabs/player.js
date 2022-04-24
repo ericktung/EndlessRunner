@@ -27,6 +27,5 @@ class Player extends Phaser.GameObjects.Sprite {
     // position reset
     reset() {
         this.x = game.config.width;
-       
     }
 }

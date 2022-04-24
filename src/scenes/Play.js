@@ -38,7 +38,14 @@ class Play extends Phaser.Scene {
         
         this.block = this.physics.add.sprite(360, game.config.height/2-tileSize, 'block').setScale(SCALE);
         this.block.body.setAllowGravity(true).setVelocityX(-200);
+
+
+
+        this.blockV = this.physics.add.sprite(300, game.config.height/2, 'block').setScale(SCALE);
+        this.blockV.body.setAllowGravity(false).setVelocityX(-200);
         
+        this.physics.add.collider(this.blockV,this.ground);
+
         this.physics.add.collider(this.player, this.ground);
         this.physics.add.collider(this.block,this.ground);
         this.physics.add.overlap(this.player,this.block,this.blockdestory,null,this);//counter dosent work
@@ -52,10 +59,20 @@ class Play extends Phaser.Scene {
         if(this.block.x<0){
             this.block.x=game.config.width;
         }
+        if(this.blockV.x<0){
+            this.blockV.x=game.config.width;
+        }
         if(this.checkCollision(this.player, this.block)) {
             //maybe put animation??
             //add counter
-            
+            // this.block.x = Phaser.Math.Between(0, game.config.width);
+            this.block.x=game.config.width;
+        }
+        if(this.checkCollision(this.player, this.blockV)) {
+            //maybe put animation??
+            //add counter
+            // this.block.x = Phaser.Math.Between(0, game.config.width);
+            this.scene.start("GameOver"); 
         }
         
 		// check if alien is grounded
