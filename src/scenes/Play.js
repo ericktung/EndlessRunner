@@ -31,6 +31,8 @@ class Play extends Phaser.Scene {
         this.BG3=this.add.tileSprite(0,0, game.config.width, game.config.height, 'BG3').setOrigin(0);
         this.BG1=this.add.tileSprite(0,0, game.config.width, game.config.height, 'BG1').setOrigin(0);
        
+
+       
         
         this.ground = this.add.group();
         for(let i = 0; i < game.config.width; i += tileSize) {
@@ -39,6 +41,7 @@ class Play extends Phaser.Scene {
             groundTile.body.allowGravity = false;
             this.ground.add(groundTile);
         }
+        
         this.groundScroll = this.add.tileSprite(0, game.config.height-tileSize, game.config.width, tileSize, 'ground').setOrigin(0);
        
         this.player = this.physics.add.sprite(120, game.config.height/2-tileSize, 'player').setScale(SCALE);
@@ -58,6 +61,7 @@ class Play extends Phaser.Scene {
         this.physics.add.overlap(this.player,this.block,this.blockdestory,null,this);//counter dosent work
         //this.addblock()
     }
+    
     update() {
         // update tile sprites (tweak for more "speed")
         this.BG2.tilePositionX += this.SCROLL_SPEED;
@@ -110,10 +114,11 @@ class Play extends Phaser.Scene {
 	    	this.jumps--;
 	    	this.jumping = false;
 	    }
-        
-        if(Phaser.Input.Keyboard.JustDown(keyENTER)){
-            this.scene.start("GameOver");    
+        if(keyDOWN.isDown){//change the size of the collison box
+           
         }
+        
+      
     }
     blockdestory(player,block){//destory block when it is touch
         block.destroy();

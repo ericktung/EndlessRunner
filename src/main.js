@@ -4,21 +4,17 @@ const SCALE = 0.5;
 const tileSize = 35;
 
 let config = {
-    type: Phaser.CANVAS,
+    type: Phaser.AUTO,
     width: 1024,
     height: 576,
     physics: {
         default: "arcade",
         arcade: {
-            debug: false,
-            gravity: {
-                x: 0,
-                y: 0
-            }
+            debug: true
         }
        
     },
-    scene: [ Menu, Play, GameOver ]
+    scene: [  Play, GameOver ]
   
 }
 
