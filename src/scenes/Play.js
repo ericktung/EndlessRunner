@@ -8,9 +8,12 @@ class Play extends Phaser.Scene {
         this.load.path ='./asset/'; //set path to asset.
         this.load.image('player','player.png');
         this.load.image('block','block.png')
-        this.load.image("Sky",'Sky.png');
+        this.load.image("BG1",'BG1.png');
         this.load.image("ground",'ground.png');
         this.load.image('platformTile', 'groundBlock.png')
+        this.load.image("BG2",'BG2.png');
+        this.load.image("BG3",'Bg3.png');
+
 
     }
     create(){
@@ -23,10 +26,15 @@ class Play extends Phaser.Scene {
         this.MAX_JUMPS = 1;
         this.platformVelocity = -300;
         this.SCROLL_SPEED = 4;
+        this.SCROLL_SPEED = 1;
         this.counter =0;
         this.physics.world.gravity.y = 2600;
         cursors = this.input.keyboard.createCursorKeys();
-        this.sky=this.add.tileSprite(0,0, game.config.width, game.config.height, 'Sky').setOrigin(0);
+        this.BG2=this.add.tileSprite(0,0, game.config.width, game.config.height, 'BG2').setOrigin(0);
+        this.BG3=this.add.tileSprite(0,0, game.config.width, game.config.height, 'BG3').setOrigin(0);
+        this.BG1=this.add.tileSprite(0,0, game.config.width, game.config.height, 'BG1').setOrigin(0);
+       
+        
         this.ground = this.add.group();
         for(let i = 0; i < game.config.width; i += tileSize) {
             let groundTile = this.physics.add.sprite(i, game.config.height - tileSize, 'platformTile').setScale(1).setOrigin(0);
@@ -78,6 +86,10 @@ class Play extends Phaser.Scene {
         // update tile sprites (tweak for more "speed")
         this.sky.tilePositionX += this.SCROLL_SPEED / 2;
         //this.groundScroll.tilePositionX += this.SCROLL_SPEED;
+        this.BG2.tilePositionX += this.SCROLL_SPEED;
+        this.BG3.tilePositionX += this.SCROLL_SPEED+1;
+
+        this.groundScroll.tilePositionX += this.SCROLL_SPEED;
        
         if(this.block.x<0){
             this.block.x=game.config.width;
