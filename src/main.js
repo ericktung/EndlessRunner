@@ -1,12 +1,12 @@
 let cursors;
 let currentScene = 0;
 const SCALE = 0.5;
-const tileSize = 35;
+const tileSize = 16;
 
 let config = {
     type: Phaser.CANVAS,
-    width: 640,
-    height: 480,
+    width: 1024,
+    height: 576,
     physics: {
         default: "arcade",
         arcade: {

@@ -10,6 +10,7 @@ class Play extends Phaser.Scene {
         this.load.image('block','block.png')
         this.load.image("Sky",'Sky.png');
         this.load.image("ground",'ground.png');
+        this.load.image('platformTile', 'groundBlock.png')
 
     }
     create(){
@@ -20,6 +21,7 @@ class Play extends Phaser.Scene {
         keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
         this.JUMP_VELOCITY = -700;
         this.MAX_JUMPS = 1;
+        this.platformVelocity = -300;
         this.SCROLL_SPEED = 4;
         this.counter =0;
         this.physics.world.gravity.y = 2600;
@@ -27,12 +29,13 @@ class Play extends Phaser.Scene {
         this.sky=this.add.tileSprite(0,0, game.config.width, game.config.height, 'Sky').setOrigin(0);
         this.ground = this.add.group();
         for(let i = 0; i < game.config.width; i += tileSize) {
-            let groundTile = this.physics.add.sprite(i, game.config.height - tileSize, 'ground').setScale(SCALE).setOrigin(0);
+            let groundTile = this.physics.add.sprite(i, game.config.height - tileSize, 'platformTile').setScale(1).setOrigin(0);
             groundTile.body.immovable = true;
             groundTile.body.allowGravity = false;
             this.ground.add(groundTile);
         }
-        this.groundScroll = this.add.tileSprite(0, game.config.height-tileSize, game.config.width, tileSize, 'ground').setOrigin(0);
+        
+        //this.groundScroll = this.add.tileSprite(0, game.config.height-tileSize, game.config.width, tileSize, 'ground').setOrigin(0);
        
         this.player = this.physics.add.sprite(120, game.config.height/2-tileSize, 'player').setScale(SCALE);
         
@@ -41,7 +44,7 @@ class Play extends Phaser.Scene {
 
 
         //Vanish block
-        this.blockV = this.physics.add.sprite(300, game.config.height/2, 'block').setScale(SCALE);
+        this.blockV = this.physics.add.sprite(300, game.config.height/2, 'platformTile').setScale(1);
         this.blockV.body.setAllowGravity(false).setVelocityX(-200);
         
         this.physics.add.collider(this.blockV,this.ground);
@@ -50,11 +53,31 @@ class Play extends Phaser.Scene {
         this.physics.add.collider(this.block,this.ground);
         this.physics.add.overlap(this.player,this.block,this.blockdestory,null,this);//counter dosent work
         //this.addblock()
+
+        // Platform Group
+        this.platformGroup = this.add.group({
+            runChildUpdate: true
+        });
+        this.time.delayedCall(500, () => { 
+            this.addPlatform(); 
+        });
+    }
+    addPlatform() {
+        let platformLength = Math.floor(Math.random() * 1024);
+        let platformX = game.config.width + Math.floor(Math.random() * 1024);
+        let platformY = Phaser.Math.Between(game.config.height / 2 + tileSize, game.config.height - tileSize);
+        let speedVelocity = this.platformVelocity;
+
+        let tilePlatform = new Platforms(this, platformX, platformY, platformLength, speedVelocity);
+        tilePlatform.createPlatform();
+          
+               //(x, y, length, velocity)
+        this.platformGroup.add(tilePlatform);
     }
     update() {
         // update tile sprites (tweak for more "speed")
-        this.sky.tilePositionX += this.SCROLL_SPEED;
-        this.groundScroll.tilePositionX += this.SCROLL_SPEED;
+        this.sky.tilePositionX += this.SCROLL_SPEED / 2;
+        //this.groundScroll.tilePositionX += this.SCROLL_SPEED;
        
         if(this.block.x<0){
             this.block.x=game.config.width;
@@ -106,9 +129,10 @@ class Play extends Phaser.Scene {
             this.scene.start("GameOver");    
         }
     }
+
     blockdestory(player,block){//destory block when it is touch
         block.destroy();
-       this.destroy=true;
+        this.destroy=true;
     }
     addblock(){//trying to create a new block after it is destory
         this.destroy=false
@@ -116,8 +140,9 @@ class Play extends Phaser.Scene {
             this.block = this.physics.add.sprite(360, game.config.height/2-tileSize, 'block').setScale(SCALE);
             this.block.body.setAllowGravity(true).setVelocityX(-200);
         }
-        
     }
+
+    
     checkCollision(player, block) {
         // simple AABB checking
         if (player.x < block.x + block.width && 
