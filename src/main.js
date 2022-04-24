@@ -7,6 +7,7 @@ let config = {
     type: Phaser.CANVAS,
     width: 1024,
     height: 576,
+    parent: "endless-runner",
     physics: {
         default: "arcade",
         arcade: {
