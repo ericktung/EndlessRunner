@@ -40,7 +40,7 @@ class Play extends Phaser.Scene {
         this.block.body.setAllowGravity(true).setVelocityX(-200);
 
 
-
+        //Vanish block
         this.blockV = this.physics.add.sprite(300, game.config.height/2, 'block').setScale(SCALE);
         this.blockV.body.setAllowGravity(false).setVelocityX(-200);
         
@@ -59,15 +59,18 @@ class Play extends Phaser.Scene {
         if(this.block.x<0){
             this.block.x=game.config.width;
         }
+        //vanish block
         if(this.blockV.x<0){
             this.blockV.x=game.config.width;
         }
+
         if(this.checkCollision(this.player, this.block)) {
             //maybe put animation??
             //add counter
             // this.block.x = Phaser.Math.Between(0, game.config.width);
             this.block.x=game.config.width;
         }
+        //checking vanish block collision
         if(this.checkCollision(this.player, this.blockV)) {
             //maybe put animation??
             //add counter
