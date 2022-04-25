@@ -13,7 +13,7 @@ class Play extends Phaser.Scene {
         this.load.image('platformTile', 'groundBlock.png')
         this.load.image("BG2",'BG2.png');
         this.load.image("BG3",'Bg3.png');
-
+        this.load.image("Obstacle", "Obstacle.png")
 
     }
     create(){
@@ -24,7 +24,7 @@ class Play extends Phaser.Scene {
         keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
         this.JUMP_VELOCITY = -700;
         this.MAX_JUMPS = 1;
-        this.platformVelocity = -300;
+        this.platformVelocity = -400;
         this.SCROLL_SPEED = 4;
         this.SCROLL_SPEED = 1;
         this.counter =0;
@@ -33,8 +33,7 @@ class Play extends Phaser.Scene {
         this.BG2=this.add.tileSprite(0,0, game.config.width, game.config.height, 'BG2').setOrigin(0);
         this.BG3=this.add.tileSprite(0,0, game.config.width, game.config.height, 'BG3').setOrigin(0);
         this.BG1=this.add.tileSprite(0,0, game.config.width, game.config.height, 'BG1').setOrigin(0);
-       
-        
+
         this.ground = this.add.group();
         for(let i = 0; i < game.config.width; i += tileSize) {
             let groundTile = this.physics.add.sprite(i, game.config.height - tileSize, 'platformTile').setScale(1).setOrigin(0);
@@ -52,7 +51,7 @@ class Play extends Phaser.Scene {
 
 
         //Vanish block
-        this.blockV = this.physics.add.sprite(300, game.config.height/2, 'platformTile').setScale(1);
+        this.blockV = this.physics.add.sprite(300, game.config.height/2, 'Obstacle').setScale(4);
         this.blockV.body.setAllowGravity(false).setVelocityX(-200);
         
         this.physics.add.collider(this.blockV,this.ground);
@@ -60,37 +59,42 @@ class Play extends Phaser.Scene {
         this.physics.add.collider(this.player, this.ground);
         this.physics.add.collider(this.block,this.ground);
         this.physics.add.overlap(this.player,this.block,this.blockdestory,null,this);//counter dosent work
-        //this.addblock()
 
+        
         // Platform Group
         this.platformGroup = this.add.group({
             runChildUpdate: true
         });
-        this.time.delayedCall(500, () => { 
+        this.time.delayedCall(1000, () => { 
             this.addPlatform(); 
         });
     }
+    
     addPlatform() {
-        let platformLength = Math.floor(Math.random() * 1024);
-        let platformX = game.config.width + Math.floor(Math.random() * 1024);
-        let platformY = Phaser.Math.Between(game.config.height / 2 + tileSize, game.config.height - tileSize);
-        let speedVelocity = this.platformVelocity;
+        
+        this.tileGroup = this.add.group({runChildUpdate: true});
+        // this.platformLength = Math.floor(Math.random() * 1024);  moved inside Platforms.js
+        this.platformX = game.config.width;
+        this.platformY = Phaser.Math.Between(game.config.height *2 / 3, game.config.height - tileSize);
+        this.speedVelocity = this.platformVelocity;
 
-        let tilePlatform = new Platforms(this, platformX, platformY, platformLength, speedVelocity);
-        tilePlatform.createPlatform();
-          
-               //(x, y, length, velocity)
-        this.platformGroup.add(tilePlatform);
-    }
+        let tileFloor = new Platforms(this, this.platformX, this.platformY, 'platformTile', this.speedVelocity);
+        this.tileGroup.add(tileFloor);
+        this.physics.add.collider(this.player, this.tileGroup);
+        }
+
+
+    
     update() {
+        console.log(this.spawnTimer);
+        console.log(this.tileGroup);
         // update tile sprites (tweak for more "speed")
-        this.sky.tilePositionX += this.SCROLL_SPEED / 2;
-        //this.groundScroll.tilePositionX += this.SCROLL_SPEED;
+        this.BG1.tilePositionX += this.SCROLL_SPEED / 2;
         this.BG2.tilePositionX += this.SCROLL_SPEED;
         this.BG3.tilePositionX += this.SCROLL_SPEED+1;
-
-        this.groundScroll.tilePositionX += this.SCROLL_SPEED;
        
+        //this.groundScroll.tilePositionX += this.SCROLL_SPEED;
+
         if(this.block.x<0){
             this.block.x=game.config.width;
         }

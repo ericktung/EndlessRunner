@@ -1,32 +1,33 @@
 class Platforms extends Phaser.Physics.Arcade.Sprite {
-    constructor(scene, x, y, length, texture, velocity) {
-        super(scene, x, y, 'platformTile');
-        scene.add.existing(this);   // add to existing scene
+    constructor(scene, x, y, texture, velocity) {
+
+        super(scene, x, y, texture, velocity).setOrigin(0.1, 0);
+
+        scene.add.existing(this);
         scene.physics.add.existing(this);
+
+        this.setTexture(texture);
         this.setVelocityX(velocity);
         this.setImmovable(true);
         this.body.setAllowGravity(false);
+        this.setFriction(0, [0])
+
+        this.setScale(Math.floor(Math.random() * 64), [Math.floor(Math.random() * 24)]);
+
+        this.length = length;
         this.playerEnd = true;
-        
+
     }
 
     update() {
-        if (this.x < -this.width) {
+
+        if (this.getTopRight.x < 0) {
             this.destroy();
         }
-        if (this.playerEnd && this.x < game.config.width / 3) {
+        if (this.playerEnd && this.getTopRight().x <= game.config.width) {
             this.playerEnd = false;
-            this.scene.addPlatform(this.parent, this.x, this.y, this.length, this.velocity);
+            this.scene.addPlatform();
         }
     }
-    createPlatform() {
-        for (let i = this.x; i <= this.x + this.length; i += tileSize) {
-            for (let u = this.y; u <= game.config.height; u += tileSize){
-                   let tileFloor = this.physics.add.sprite(i, u, 'platformTile').setScale(1).setOrigin(0);
-                   tileFloor.body.setImmovable(true);
-                   tileFloor.body.setAllowGravity(false);
-            }
-        }
-        console.log('hi from createPlatform');
-    }
+    
 }
