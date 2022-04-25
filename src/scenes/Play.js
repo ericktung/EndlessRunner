@@ -73,6 +73,12 @@ class Play extends Phaser.Scene {
         this.physics.add.collider(this.block,this.ground);
         this.physics.add.overlap(this.player,this.obsticles,this.blockdestory,null,this);//counter dosent work
         //this.addblock()
+        this.addingobstical = this.time.addEvent({
+            delay: 1000,
+            callback: this.addObsticle,
+            callbackScope: this,
+            loop: true
+        });
     }
     
     update() {
@@ -81,7 +87,8 @@ class Play extends Phaser.Scene {
         this.BG3.tilePositionX += this.SCROLL_SPEED+1;
 
         this.groundScroll.tilePositionX += this.SCROLL_SPEED;
-        //this.addObsticle()
+       
+       
         Phaser.Actions.IncX(this.obsticles.getChildren(),-this.SCROLL_SPEED)       
         if(this.block.x<0){
             this.block.x=game.config.width;
