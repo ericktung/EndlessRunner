@@ -30,7 +30,8 @@ class Play extends Phaser.Scene {
         this.BG2=this.add.tileSprite(0,0, game.config.width, game.config.height, 'BG2').setOrigin(0);
         this.BG3=this.add.tileSprite(0,0, game.config.width, game.config.height, 'BG3').setOrigin(0);
         this.BG1=this.add.tileSprite(0,0, game.config.width, game.config.height, 'BG1').setOrigin(0);
-       
+        this.blocks = this.physics.add.group({ immovable: true })
+        
 
        
         
