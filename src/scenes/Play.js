@@ -152,7 +152,7 @@ class Play extends Phaser.Scene {
         }
         
     }
-    addObsticle(){
+    addObsticle(){//here this function andy
         var outer = new Phaser.Geom.Rectangle(0, 0, 800, 600);
         var inner = new Phaser.Geom.Rectangle(350, 250, 100, 100);
         for (var i=0; i<10;i++){
