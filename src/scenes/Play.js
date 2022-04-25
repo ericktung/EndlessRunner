@@ -81,9 +81,8 @@ class Play extends Phaser.Scene {
         this.BG3.tilePositionX += this.SCROLL_SPEED+1;
 
         this.groundScroll.tilePositionX += this.SCROLL_SPEED;
-        this.addObsticle()
-        this.obsticles.x+=this.SCROLL_SPEED;
-       
+        //this.addObsticle()
+        Phaser.Actions.IncX(this.obsticles.getChildren(),-this.SCROLL_SPEED)       
         if(this.block.x<0){
             this.block.x=game.config.width;
         }
@@ -157,7 +156,7 @@ class Play extends Phaser.Scene {
         var inner = new Phaser.Geom.Rectangle(350, 250, 100, 100);
         for (var i=0; i<2;i++){
             var p = Phaser.Geom.Rectangle.RandomOutside(outer, inner);
-            var b = this.obsticles.create(p.x, p.y,  'block');
+            var b = this.obsticles.create(this.game.config.width, p.y,  'block');
              
             this.physics.add.existing(b);
             
