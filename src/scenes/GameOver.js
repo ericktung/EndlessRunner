@@ -20,7 +20,8 @@ class GameOver extends Phaser.Scene {
             fixedWidth: 0
         }
         keyENTER = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
-        this.add.text(20,20,"This is game over",menuConfig).setOrigin(0,0)
+        this.add.text(20,20,"This is game over",menuConfig).setOrigin(0,0);
+        this.add.text(512, 288, "High Score: " + highScore).setOrigin(0.5, 0.5);
     }
      
      update(){

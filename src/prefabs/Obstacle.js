@@ -22,10 +22,11 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite {
         this.playerPass = true;
     }
     create() {
-        
+
     }
 
     update() {
+        
         if (this.getTopRight.x < -10){
             this.destroy();
         }

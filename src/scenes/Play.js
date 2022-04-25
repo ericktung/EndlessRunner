@@ -63,22 +63,16 @@ class Play extends Phaser.Scene {
         }
        
         this.player = new Player(this, 256, game.config.height/2 + tileSize*4, 'player').setScale(2);
-        
-        this.block = this.physics.add.sprite(360, game.config.height/2-tileSize, 'block').setScale(SCALE);
-        this.block.body.setAllowGravity(true).setVelocityX(-200);
-
 
         //Vanish block
         this.blockV = this.physics.add.sprite(300, game.config.height/2, 'block').setScale(SCALE);
         this.blockV.body.setAllowGravity(false).setVelocityX(-200);
         
-        this.physics.add.collider(this.blockV, this.groundTile);
         this.physics.add.collider(this.player, this.groundTile);
         this.physics.add.collider(this.groundTile, this.obsticles)
-        this.physics.add.collider(this.block,this.groundTile);
-        this.physics.add.collider(this.obsticles, this.tileGroup);
-        this.physics.add.overlap(this.player,this.block,this.blockdestory,null,this);//counter dosent work
+        //this.physics.add.collider(this.obsticles, this.tileGroup);
 
+        this.physics.add.overlap(this.player,this.block,this.blockdestory,null,this);//counter dosent work
         this.physics.add.overlap(this.player,this.obsticles,this.blockdestory,null,this);//counter dosent work
         
         this.addingobstical = this.time.addEvent({
@@ -133,13 +127,13 @@ class Play extends Phaser.Scene {
         this.speedVelocity = this.platformVelocity;                     // old variable, keep for now
 
         // create platform
-        let tileFloor = new Platform(this, this.platformX, this.platformY, 'groundBlock', this.speedVelocity);
+        this.tileFloor = new Platform(this, this.platformX, this.platformY, 'groundBlock', this.speedVelocity);
 
         // theoretically add to group, does not work
-        this.tileGroup.add(tileFloor);
+        this.tileGroup.add(this.tileFloor);
 
-        this.physics.add.collider(this.obstacleGroup, tileFloor);      // collider functions for the newly made platform
-        this.physics.add.collider(this.player, tileFloor);
+        this.physics.add.collider(this.tileFloor, this.obstacleGroup);      // collider functions for the newly made platform
+        this.physics.add.collider(this.player, this.tileFloor);
        }
 
        addObstacle() {      //here this function andy
@@ -150,16 +144,20 @@ class Play extends Phaser.Scene {
             //var b = this.obsticles.create(this.game.config.width, p.y,  'block');
              
             //this.physics.add.existing(b);
-        let obstacleGen = new Obstacle(this, game.config.width, game.config.height/2, 'Obstacle', this.platformVelocity);
+        this.obstacleGen = new Obstacle(this, game.config.width + 200, game.config.height/2, 'Obstacle', this.platformVelocity);
 
-        this.obstacleGroup.add(obstacleGen);
+        this.obstacleGroup.add(this.obstacleGen);
 
-        this.physics.add.collider(obstacleGen, this.tileGroup);      // collider functions for the newly made platform
-        this.physics.add.collider(this.player, obstacleGen);
+        this.physics.add.collider(this.obstacleGen, this.tileGroup);      // collider functions for the newly made platform
+        this.physics.add.collider(this.player, this.obstacleGen);
         }
 
 
     update() {
+
+        if (this.timerScore > highScore) {
+            highScore = this.timerScore;
+        }
 
         if (this.player.body.touching.right && this.platformVelocity <= -100) {
 
@@ -181,20 +179,17 @@ class Play extends Phaser.Scene {
         this.BG3.tilePositionX += this.SCROLL_SPEED+1;
        
        //Phaser.Actions.IncX(this.obsticles.getChildren(),-this.SCROLL_SPEED)       
-        if(this.block.x<0){
-            this.block.x=game.config.width;
-        }
         //vanish block
         if(this.blockV.x<0){
             this.blockV.x=game.config.width;
         }
 
-        if(this.checkCollision(this.player, this.block)) {
+        //if(this.checkCollision(this.player, this.block)) {
             //maybe put animation??
             //add counter
             // this.block.x = Phaser.Math.Between(0, game.config.width);
-            this.block.x=game.config.width;
-        }
+            //this.block.x=game.config.width;
+        //}
         //checking vanish block collision
         if(this.checkCollision(this.player, this.blockV)) {
             //maybe put animation??
@@ -241,13 +236,18 @@ class Play extends Phaser.Scene {
         
       
     }
-    change(){
+
+    change() {
+
         this.player.scaleY = 0.25
+
     }
-    blockdestory(player,obsticles){//destory block when it is touch
+    blockdestory(player,obsticles) {//destory block when it is touch
+
         obsticles.destroy();
-       this.destroy=true;
+        this.destroy=true;
     }
+    /*
     addblock(){//trying to create a new block after it is destory
         this.destroy=false
         if (this.destory=true){
@@ -255,7 +255,7 @@ class Play extends Phaser.Scene {
             this.block.body.setAllowGravity(true).setVelocityX(-200);
         }
         
-    }
+    } */
     
     checkCollision(player, block) {
         // simple AABB checking

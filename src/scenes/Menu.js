@@ -20,7 +20,7 @@ class Menu extends Phaser.Scene {
         fixedWidth: 0
     }
     keyENTER = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
-    this.add.text(20,20,"Press Enter to play scene",menuConfig).setOrigin(0,0)
+    this.add.text(20,20,"Press Enter to play scene",menuConfig).setOrigin(0,0);
 }
  
  update(){
