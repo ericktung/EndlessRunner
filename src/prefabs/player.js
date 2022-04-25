@@ -1,29 +1,21 @@
-class Player extends Phaser.GameObjects.Sprite {
-    constructor(scene, x, y, texture, frame, pointValue) {
-        super(scene, x, y, texture, frame);
-        scene.add.existing(this);   // add to existing scene
-        scene.physics.add.existing(this);
-        this.moveSpeed = 2;       
+class Player extends Phaser.Physics.Arcade.Sprite {
+    constructor(scene, x, y, texture, velocity) {
 
+        super(scene, x, y, texture, velocity);
+        scene.add.existing(this);
+        scene.physics.add.existing(this);       // creates the player with physics
+        this.setTexture(texture);
+        this.body.setAllowGravity(true);
+        //this.setFriction(0);                  // doesn't work
+
+        this.moveSpeed = 2;
         
     }
    create(){
-    
+        // QOL: possibly add controls here, we already have controls in Play.js
+        
    }
-    update() {
-        if(keyLEFT.isDown) {
-            this.x -= this.moveSpeed;
-        } else if (keyRIGHT.isDown) {
-            this.x += this.moveSpeed;
-        }else if(keyDOWN.isDown) {
-            this.y+= this.moveSpeed;
-            this.height=this.height/2; //change height to 1/2;
-        } else if (keyUP.isDown ) {
-            this.y -= this.moveSpeed;
-        }else{
-            this.height =this.height;
-        }
-    }
+    
     
     // position reset
     reset() {
