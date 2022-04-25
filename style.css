@@ -9,11 +9,10 @@ body {
 
     background-size: auto;
     background-color: #361926;
-    margin-left: 10%;
-    margin-right: 10%;
+    margin-left: 10vw;
+    margin-right: 10vw;
     margin-top: 0%;
     margin-bottom: 0%;
-    padding: 10%;
     padding-top: 5%;
     padding-bottom: 8.5%;
 }
