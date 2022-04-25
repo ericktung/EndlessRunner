@@ -58,7 +58,8 @@ class Play extends Phaser.Scene {
        
         this.player = this.physics.add.sprite(120, game.config.height/2-tileSize, 'player').setScale(SCALE);
         
-        
+        this.block = this.physics.add.sprite(360, game.config.height/2-tileSize, 'block').setScale(SCALE);
+        this.block.body.setAllowGravity(true).setVelocityX(-200);
 
 
         //Vanish block
@@ -69,7 +70,7 @@ class Play extends Phaser.Scene {
 
         this.physics.add.collider(this.player, this.ground);
         this.physics.add.collider(this.ground, this.obsticles)
-    
+        this.physics.add.collider(this.block,this.ground);
         this.physics.add.overlap(this.player,this.obsticles,this.blockdestory,null,this);//counter dosent work
         //this.addblock()
     }
