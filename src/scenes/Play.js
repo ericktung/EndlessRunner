@@ -43,7 +43,15 @@ class Play extends Phaser.Scene {
             groundTile.body.allowGravity = false;
             this.ground.add(groundTile);
         }
-        this.obsticles = this.physics.add.group()
+        this.obsticles = this.physics.add.group({//eiser way to create obsticales
+            key :'block',
+            quantity:24
+        });
+        this.obsticles.children.each(function(block){//eiser way to create obsticales
+            let x = Math.random()*game.config.width;
+            let y =Math.random()*game.config.height;
+            block.setPosition(x,y);
+        })
         var outer = new Phaser.Geom.Rectangle(0, 0, 800, 600);
         var inner = new Phaser.Geom.Rectangle(350, 250, 100, 100);
 
