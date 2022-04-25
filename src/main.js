@@ -4,21 +4,18 @@ const SCALE = 0.5;
 const tileSize = 16;
 
 let config = {
-    type: Phaser.CANVAS,
+    type: Phaser.AUTO,
     width: 1024,
     height: 576,
+    parent: "endless-runner",
     physics: {
         default: "arcade",
         arcade: {
-            debug: false,
-            gravity: {
-                x: 0,
-                y: 0
-            }
+            debug: false
         }
        
     },
-    scene: [ Menu, Play, GameOver ]
+    scene: [  Play, GameOver ]
   
 }
 
