@@ -114,11 +114,16 @@ class Play extends Phaser.Scene {
 	    	this.jumps--;
 	    	this.jumping = false;
 	    }
-        if(keyDOWN.isDown){//change the size of the collison box
-           
+        if(keyDOWN.isDown&&this.player.isGrounded){//change the size of the collison box
+            this.player.scaleY = 0.25
+        }else if(!keyDOWN.isDown){
+            this.player.scaleY = 0.5
         }
         
       
+    }
+    change(){
+        this.player.scaleY = 0.25
     }
     blockdestory(player,block){//destory block when it is touch
         block.destroy();
