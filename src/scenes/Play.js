@@ -155,7 +155,7 @@ class Play extends Phaser.Scene {
     addObsticle(){//here this function andy
         var outer = new Phaser.Geom.Rectangle(0, 0, 800, 600);
         var inner = new Phaser.Geom.Rectangle(350, 250, 100, 100);
-        for (var i=0; i<10;i++){
+        for (var i=0; i<2;i++){
             var p = Phaser.Geom.Rectangle.RandomOutside(outer, inner);
             var b = this.obsticles.create(p.x, p.y,  'block');
              
