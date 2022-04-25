@@ -13,6 +13,7 @@ class Play extends Phaser.Scene {
         this.load.image("BG2",'BG2.png');
         this.load.image("BG3",'Bg3.png');
         this.load.image("Obstacle", "Obstacle.png")
+        this.load.image('groundBlock', 'groundBlock.png')
 
     }
     create(){
@@ -109,7 +110,7 @@ class Play extends Phaser.Scene {
         this.platformY = Phaser.Math.Between(game.config.height *2 / 3, game.config.height - tileSize);
         this.speedVelocity = this.platformVelocity;
 
-        let tileFloor = new Platforms(this, this.platformX, this.platformY, 'platformTile', this.speedVelocity);
+        let tileFloor = new Platforms(this, this.platformX, this.platformY, 'groundBlock', this.speedVelocity);
         this.tileGroup.add(tileFloor);
         this.physics.add.collider(this.player, this.tileGroup);
         }
