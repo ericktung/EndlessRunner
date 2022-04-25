@@ -26,11 +26,12 @@ class Play extends Phaser.Scene {
         this.SCROLL_SPEED = 1;
         this.counter =0;
         this.physics.world.gravity.y = 2600;
+        this.spawntime =0
         cursors = this.input.keyboard.createCursorKeys();
         this.BG2=this.add.tileSprite(0,0, game.config.width, game.config.height, 'BG2').setOrigin(0);
         this.BG3=this.add.tileSprite(0,0, game.config.width, game.config.height, 'BG3').setOrigin(0);
         this.BG1=this.add.tileSprite(0,0, game.config.width, game.config.height, 'BG1').setOrigin(0);
-        this.blocks = this.physics.add.group({ immovable: true })
+       
         
 
        
@@ -42,7 +43,17 @@ class Play extends Phaser.Scene {
             groundTile.body.allowGravity = false;
             this.ground.add(groundTile);
         }
-        
+        this.obsticles = this.physics.add.group()
+        var outer = new Phaser.Geom.Rectangle(0, 0, 800, 600);
+        var inner = new Phaser.Geom.Rectangle(350, 250, 100, 100);
+
+        for (var i=0; i<10;i++){
+            var p = Phaser.Geom.Rectangle.RandomOutside(outer, inner);
+            var b = this.obsticles.create(p.x, p.y,  'block');
+             
+            this.physics.add.existing(b);
+            
+        }
         this.groundScroll = this.add.tileSprite(0, game.config.height-tileSize, game.config.width, tileSize, 'ground').setOrigin(0);
        
         this.player = this.physics.add.sprite(120, game.config.height/2-tileSize, 'player').setScale(SCALE);
@@ -58,6 +69,7 @@ class Play extends Phaser.Scene {
         this.physics.add.collider(this.blockV,this.ground);
 
         this.physics.add.collider(this.player, this.ground);
+        this.physics.add.collider(this.ground, this.obsticles)
         this.physics.add.collider(this.block,this.ground);
         this.physics.add.overlap(this.player,this.block,this.blockdestory,null,this);//counter dosent work
         //this.addblock()
@@ -69,6 +81,8 @@ class Play extends Phaser.Scene {
         this.BG3.tilePositionX += this.SCROLL_SPEED+1;
 
         this.groundScroll.tilePositionX += this.SCROLL_SPEED;
+        this.addObsticle()
+        this.obsticles.x+=this.SCROLL_SPEED;
        
         if(this.block.x<0){
             this.block.x=game.config.width;
@@ -137,6 +151,17 @@ class Play extends Phaser.Scene {
             this.block.body.setAllowGravity(true).setVelocityX(-200);
         }
         
+    }
+    addObsticle(){
+        var outer = new Phaser.Geom.Rectangle(0, 0, 800, 600);
+        var inner = new Phaser.Geom.Rectangle(350, 250, 100, 100);
+        for (var i=0; i<10;i++){
+            var p = Phaser.Geom.Rectangle.RandomOutside(outer, inner);
+            var b = this.obsticles.create(p.x, p.y,  'block');
+             
+            this.physics.add.existing(b);
+            
+        }
     }
     checkCollision(player, block) {
         // simple AABB checking
