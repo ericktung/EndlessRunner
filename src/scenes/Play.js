@@ -12,8 +12,8 @@ class Play extends Phaser.Scene {
         this.load.image("ground",'ground.png');
         this.load.image("BG2",'BG2.png');
         this.load.image("BG3",'Bg3.png');
-        this.load.image("Obstacle", "Obstacle.png")
-        this.load.image('groundBlock', 'groundBlock.png')
+        this.load.image("Obstacle", "Obstacle.png");
+        this.load.image('groundBlock', 'groundBlock.png');
     }
     create(){
         keyENTER = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
@@ -42,47 +42,60 @@ class Play extends Phaser.Scene {
         this.groundTile.setFriction(0);
         this.groundTile.tint = 0xF73D6E;
 
-        this.player = this.physics.add.sprite(256, game.config.height / 2 + tileSize, 'player')
+        // create player
+        this.player = this.physics.add.sprite(256, game.config.height / 2 + tileSize, 'player');
         this.player.setOrigin(0.5, 0.5);
-        this.player.setScale(1.5, 4);
+        this.player.setScale(1, 3);
+        this.playerMistake = 0;
+        this.playerDeath = false;
 
-        this.obsticles = this.physics.add.group({//eiser way to create obsticales
-            key :'block',
-            quantity:24
-        });
-        this.obsticles.children.each(function(block){//eiser way to create obsticales
-            let x = Math.random()*game.config.width;
-            let y =Math.random()*game.config.height;
-            block.setPosition(x,y);
-        })
-        var outer = new Phaser.Geom.Rectangle(0, 0, 800, 600);
-        var inner = new Phaser.Geom.Rectangle(350, 250, 100, 100);
+        // create monster
+        this.monster = this.physics.add.sprite(-256, 428, 'Obstacle');
+        this.monster.setOrigin(0.5, 0.5);
+        this.monster.setScale(4, 32);
+        this.monster.setImmovable();
+        this.monster.enableBody();
+        this.monster.body.setAllowGravity(false);
+        this.monsterClose = false;
+        this.monster.tint = 0xFFC700;
 
-        for (var i=0; i<10;i++){
-            var p = Phaser.Geom.Rectangle.RandomOutside(outer, inner);
-            var b = this.obsticles.create(p.x, p.y,  'block');
+        // this.obsticles = this.physics.add.group({//eiser way to create obsticales
+        //     key :'block',
+        //     quantity:24
+        // });
+        // this.obsticles.children.each(function(block){//eiser way to create obsticales
+        //     let x = Math.random()*game.config.width;
+        //     let y =Math.random()*game.config.height;
+        //     block.setPosition(x,y);
+        // })
+        // var outer = new Phaser.Geom.Rectangle(0, 0, 800, 600);
+        // var inner = new Phaser.Geom.Rectangle(350, 250, 100, 100);
+
+        // for (var i=0; i<10;i++){
+        //     var p = Phaser.Geom.Rectangle.RandomOutside(outer, inner);
+        //     var b = this.obsticles.create(p.x, p.y,  'block');
              
-            this.physics.add.existing(b);
+        //     this.physics.add.existing(b);
             
-        }
+        // }
 
         //Vanish block
         this.blockV = this.physics.add.sprite(300, game.config.height/2, 'block').setScale(SCALE);
         this.blockV.body.setAllowGravity(false).setVelocityX(-200);
         
         this.physics.add.collider(this.player, this.groundTile);
-        this.physics.add.collider(this.groundTile, this.obsticles)
+        // this.physics.add.collider(this.groundTile, this.obsticles)
         //this.physics.add.collider(this.obsticles, this.tileGroup);
 
         this.physics.add.overlap(this.player,this.block,this.blockdestory,null,this);//counter dosent work
         this.physics.add.overlap(this.player,this.obsticles,this.blockdestory,null,this);//counter dosent work
         
-        this.time.addEvent({
-            delay: 1000,
-            callback: this.addObstacle,
-            callbackScope: this,
-            loop: true
-        });
+        // this.time.addEvent({
+        //     delay: 1000,
+        //     callback: this.addObstacle,
+        //     callbackScope: this,
+        //     loop: true
+        // });
 
         this.time.addEvent({
             delay: 10000,
@@ -126,16 +139,13 @@ class Play extends Phaser.Scene {
         // this.platformLength = Math.floor(Math.random() * 1024);  moved inside Platforms.js
         this.platformX = game.config.width;                             // sets the X position of the platform on the right side of the screen
         this.platformY = Phaser.Math.Between(game.config.height / 2, game.config.height - tileSize);     // randomly generates a height for the platform
-        this.speedVelocity = this.platformVelocity;                     // old variable, keep for now
 
         // create platform
-        this.tileFloor = new Platform(this, this.platformX, this.platformY, 'groundBlock', this.speedVelocity);
+        this.tileFloor = new Platform(this, this.platformX, this.platformY, 'groundBlock', this.platformVelocity);
 
-        // theoretically add to group, does not work
+        // add to tileGroup for collision physics
         this.tileGroup.add(this.tileFloor);
 
-        this.physics.add.collider(this.tileFloor, this.obstacleGroup);      // collider functions for the newly made platform
-        this.physics.add.collider(this.player, this.tileFloor);
        }
 
        addObstacle() {      //here this function andy
@@ -146,37 +156,70 @@ class Play extends Phaser.Scene {
             //var b = this.obsticles.create(this.game.config.width, p.y,  'block');
              
             //this.physics.add.existing(b);
-        this.obstacleGen = new Obstacle(this, game.config.width + 200, game.config.height/2, 'Obstacle', this.platformVelocity);
+        this.obstacleGen = new Obstacle(this, game.config.width/2, game.config.height/2, 'Obstacle', this.platformVelocity);
 
         this.obstacleGroup.add(this.obstacleGen);
 
-        this.physics.add.collider(this.obstacleGen, this);      // collider functions for the newly made platform
-        this.physics.add.collider(this.player, this.obstacleGen);
+        this.physics.world.collide(this.obstacleGen, this.tileGroup);
+
         }
 
 
     update() {
 
+        if (this.checkCollision(this.player, this.monster)) {
+            console.log("monster collide");
+        }
+
+        //console.log(this.playerMistake);          // debug
+        //console.log(this.monster.x, this.monster.y);
+
+        if (this.playerDeath == false) {
+
+            this.physics.world.collide(this.player, this.tileGroup);
+            this.physics.world.collide(this.tileGroup, this.obstacleGroup);
+            this.physics.world.collide(this.player, this.obstacleGroup);
+            this.physics.world.collide(this.obstacleGroup, this.tileGroup);
+            this.physics.world.collide(this.player, this.monster);
+
+        }
+
         if (this.timerScore > highScore) {
+
             highScore = this.timerScore;
         }
 
-        if (this.player.body.touching.right && this.platformVelocity <= -100) {
+        if (this.player.body.touching.right) {
             
             this.player.body.velocity.x = 200;      // if player is stuck on the wall, they can escape
-            this.platformVelocity += 1;             // if the player's right side touches any object, the platforms get slower
+            this.playerMistake += 10;                // if the player's right side touches any object, it counts as a mistake
             //console.log(this.platformVelocity);   // test case
-        } else if (this.platformVelocity >= -200){
 
-                this.scene.start("GameOver");       // once the player gets slow enough, the game will end
+        } else if (this.playerMistake > 0) {
 
+                this.playerMistake -= 1;      // the playerMistake counter goes down when not in contact with a wall
+                
+                }
+        
+        if (this.playerMistake < 300) {
+            this.monsterClose = false;          // control monster spawns
+        } else {
+            this.monsterClose = true;
         }
 
-        if (this.player.y >= game.config.height + 128 || this.player.x <= -128)  {
-
-            this.scene.start("GameOver");           // game ends if player falls off map
-
+        if (this.monsterClose == true) {
+            this.time.delayedCall(20000, () => {monsterNotClose()});
+            this.monster.setX(16);
+        } else if(this.monsterClose == false) {
+            this.monster.setX(-256);
         }
+        
+        if (this.player.y >= game.config.height + 128 || 
+            this.player.x <= -128)  {
+
+            this.scene.start("GameOver");           // game ends if player falls off map, adjust for leniency
+        }
+
         // update tile sprites (tweak for more "speed")
         this.BG2.tilePositionX += this.SCROLL_SPEED;
         this.BG3.tilePositionX += this.SCROLL_SPEED+1;
@@ -230,21 +273,15 @@ class Play extends Phaser.Scene {
 	    	this.jumps--;
 	    	this.jumping = false;
 	    }
-        if(keyDOWN.isDown&&this.player.isGrounded){//change the size of the collison box
-            this.player.scaleY = 0.25
-        }else if(!keyDOWN.isDown){
-            this.player.scaleY = 0.5
-        }
-
+    }
         
-      
+    monsterNotClose(){
+        this.monsterClose = false;
     }
+    
 
-    change() {
 
-        this.player.scaleY = 0.25
-
-    }
+    
     blockdestory(player,obsticles) {//destory block when it is touch
 
         obsticles.destroy();

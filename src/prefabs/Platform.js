@@ -28,7 +28,7 @@ class Platform extends Phaser.Physics.Arcade.Sprite {
             0xFF0038            // red
         ];
 
-        this.tint = this.colorList[Math.floor(Math.random() * 5)];
+        this.tint = this.colorList[0]             //this.colorList[Math.floor(Math.random() * 5)];
 
 
     }
