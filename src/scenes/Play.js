@@ -14,7 +14,6 @@ class Play extends Phaser.Scene {
         this.load.image("BG3",'Bg3.png');
         this.load.image("Obstacle", "Obstacle.png")
         this.load.image('groundBlock', 'groundBlock.png')
-
     }
     create(){
         keyENTER = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
@@ -41,6 +40,11 @@ class Play extends Phaser.Scene {
         this.groundTile.setImmovable(true);
         this.groundTile.body.setAllowGravity(false);
         this.groundTile.setFriction(0);
+        this.groundTile.tint = 0xF73D6E;
+
+        this.player = this.physics.add.sprite(256, game.config.height / 2 + tileSize, 'player')
+        this.player.setOrigin(0.5, 0.5);
+        this.player.setScale(1.5, 4);
 
         this.obsticles = this.physics.add.group({//eiser way to create obsticales
             key :'block',
@@ -61,8 +65,6 @@ class Play extends Phaser.Scene {
             this.physics.add.existing(b);
             
         }
-       
-        this.player = new Player(this, 256, game.config.height/2 + tileSize*4, 'player').setScale(2);
 
         //Vanish block
         this.blockV = this.physics.add.sprite(300, game.config.height/2, 'block').setScale(SCALE);
@@ -75,7 +77,7 @@ class Play extends Phaser.Scene {
         this.physics.add.overlap(this.player,this.block,this.blockdestory,null,this);//counter dosent work
         this.physics.add.overlap(this.player,this.obsticles,this.blockdestory,null,this);//counter dosent work
         
-        this.addingobstical = this.time.addEvent({
+        this.time.addEvent({
             delay: 1000,
             callback: this.addObstacle,
             callbackScope: this,
@@ -123,7 +125,7 @@ class Play extends Phaser.Scene {
         // randomly generates size of platform
         // this.platformLength = Math.floor(Math.random() * 1024);  moved inside Platforms.js
         this.platformX = game.config.width;                             // sets the X position of the platform on the right side of the screen
-        this.platformY = Phaser.Math.Between(game.config.height *2 / 3, game.config.height - tileSize);     // randomly generates a height for the platform
+        this.platformY = Phaser.Math.Between(game.config.height / 2, game.config.height - tileSize);     // randomly generates a height for the platform
         this.speedVelocity = this.platformVelocity;                     // old variable, keep for now
 
         // create platform
@@ -148,7 +150,7 @@ class Play extends Phaser.Scene {
 
         this.obstacleGroup.add(this.obstacleGen);
 
-        this.physics.add.collider(this.obstacleGen, this.tileGroup);      // collider functions for the newly made platform
+        this.physics.add.collider(this.obstacleGen, this);      // collider functions for the newly made platform
         this.physics.add.collider(this.player, this.obstacleGen);
         }
 
@@ -160,7 +162,8 @@ class Play extends Phaser.Scene {
         }
 
         if (this.player.body.touching.right && this.platformVelocity <= -100) {
-
+            
+            this.player.body.velocity.x = 200;      // if player is stuck on the wall, they can escape
             this.platformVelocity += 1;             // if the player's right side touches any object, the platforms get slower
             //console.log(this.platformVelocity);   // test case
         } else if (this.platformVelocity >= -200){
@@ -169,7 +172,7 @@ class Play extends Phaser.Scene {
 
         }
 
-        if (this.player.y >= game.config.height + 64 || this.player.x <= -128)  {
+        if (this.player.y >= game.config.height + 128 || this.player.x <= -128)  {
 
             this.scene.start("GameOver");           // game ends if player falls off map
 
@@ -187,7 +190,7 @@ class Play extends Phaser.Scene {
         //if(this.checkCollision(this.player, this.block)) {
             //maybe put animation??
             //add counter
-            // this.block.x = Phaser.Math.Between(0, game.config.width);
+            //this.block.x = Phaser.Math.Between(0, game.config.width);
             //this.block.x=game.config.width;
         //}
         //checking vanish block collision
@@ -213,7 +216,7 @@ class Play extends Phaser.Scene {
 	    }
         // allow steady velocity change up to a certain key down duration
         // see: https://photonstorm.github.io/phaser3-docs/Phaser.Input.Keyboard.html#.DownDuration__anchor
-	    if(this.jumps > 0 && Phaser.Input.Keyboard.DownDuration(cursors.up, 150)) {
+	    if(this.jumps > 0 && Phaser.Input.Keyboard.DownDuration(cursors.up, 250)) {
 	        this.player.body.velocity.y = this.JUMP_VELOCITY;
 	        this.jumping = true;
             this.player.body.velocity.x = 100;          // allows the player to move forward ONLY when jumping

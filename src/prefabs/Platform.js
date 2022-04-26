@@ -15,10 +15,21 @@ class Platform extends Phaser.Physics.Arcade.Sprite {
         this.setFriction(0);
         this.enableBody();
 
-        this.setScale(Math.floor(Math.random() * 32), [Math.floor(Math.random() * 24)]);        // Randomizes size of rectangle (subject to tweaking)
+        this.setScale(Math.ceil(Math.random() * 32), [Math.ceil(Math.random() * 24)]);        // Randomizes size of rectangle (subject to tweaking)
 
         this.length = length;
         this.playerEnd = true;      // old variables
+
+        this.colorList = [
+            0xF73D6E,           // sherbet
+            0xF7693D,           // orange
+            0xF73DCB,           // hot pink
+            0xFFC700,           // yellow
+            0xFF0038            // red
+        ];
+
+        this.tint = this.colorList[Math.floor(Math.random() * 5)];
+
 
     }
     create() {
