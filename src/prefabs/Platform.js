@@ -15,7 +15,10 @@ class Platform extends Phaser.Physics.Arcade.Sprite {
         this.setFriction(0);
         this.enableBody();
 
-        this.setScale(Math.ceil(Math.random() * 32), [Math.ceil(Math.random() * 24)]);        // Randomizes size of rectangle (subject to tweaking)
+        this.scaleX = Math.ceil(Math.random() * (32 - 8) + 8);
+        this.scaleY = Math.ceil(Math.random() * 24);
+
+        this.setScale(this.scaleX, this.scaleY);        // Randomizes size of rectangle (subject to tweaking)
 
         this.length = length;
         this.playerEnd = true;      // old variables
@@ -32,10 +35,6 @@ class Platform extends Phaser.Physics.Arcade.Sprite {
 
 
     }
-    create() {
-       
-    }
-
     update() {
 
         if (this.getTopRight.x < 0) {       // destroys rectangle once the last pixel of it reaches the left of the screen

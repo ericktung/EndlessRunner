@@ -6,12 +6,12 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite {
         scene.physics.add.existing(this);
         
         this.setTexture(texture);
-        this.setImmovable(false);
-        this.body.setGravity(0, 5);
+        this.setImmovable(true);
+        this.body.setAllowGravity(false);
         this.enableBody();
-        this.velocityX = velocity;
+        this.setVelocityX(velocity);
 
-        this.setScale(Math.ceil(Math.random() * 8));        // Randomizes size of obstacle (subject to tweaking)
+        this.setScale(3);        // Randomizes size of obstacle (subject to tweaking)
 
         this.obstacleList = [
             'jumping',
@@ -27,16 +27,9 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite {
         if (this.getTopRight.x < -10){
             this.destroy();
         }
-        if (this.body.touching.down) {
-            this.setVelocityX(this.velocityX);
-        }
         if (this.getTopRight.x < game.config.width / 3 && this.playerPass) {
             this.playerPass = false;
             this.scene.addObstacle();
         }
-        if (this.body.touching.down) {
-            this.body.setGravity(0, 0);
-        }
-
 }
 }

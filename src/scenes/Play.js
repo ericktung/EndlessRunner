@@ -32,7 +32,6 @@ class Play extends Phaser.Scene {
         keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
         this.JUMP_VELOCITY = -700;
         this.MAX_JUMPS = 1;
-        this.platformVelocity = -400; // How fast the platforms move left across the screen
         this.SCROLL_SPEED = 5;
         this.counter = 0;
         this.physics.world.gravity.y = 2600;
@@ -42,6 +41,10 @@ class Play extends Phaser.Scene {
         this.BG2 = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'BG2').setOrigin(0);
         this.BG3 = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'BG3').setOrigin(0);
         this.BG1 = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'BG1').setOrigin(0);
+
+        // Difficulty variables
+        this.platformVelocity = -400;       // How fast the platforms move left across the screen
+        this.spawnDifficulty = 30;          // percentage based obstacle spawner
 
         // This generates the first platform that the player can stand on. Timings subject to change
         let randomGenNumber = (Math.floor(Math.random() * 8) * 16);
@@ -57,7 +60,7 @@ class Play extends Phaser.Scene {
         this.player.setOrigin(0.5, 0.5);
         this.playerMistake = 0;
         this.playerDeath = false;
-        this.player.body.setSize(this.player.width - 50, this.player.height, true)
+        this.player.setSize(64, 128);
 
         this.anims.create({
             key: "run",
@@ -90,27 +93,6 @@ class Play extends Phaser.Scene {
             framerate: 8,
             repeat: -1
         });
-
-
-        // this.obsticles = this.physics.add.group({//eiser way to create obsticales
-        //     key :'block',
-        //     quantity:24
-        // });
-        // this.obsticles.children.each(function(block){//eiser way to create obsticales
-        //     let x = Math.random()*game.config.width;
-        //     let y =Math.random()*game.config.height;
-        //     block.setPosition(x,y);
-        // })
-        // var outer = new Phaser.Geom.Rectangle(0, 0, 800, 600);
-        // var inner = new Phaser.Geom.Rectangle(350, 250, 100, 100);
-
-        // for (var i=0; i<10;i++){
-        //     var p = Phaser.Geom.Rectangle.RandomOutside(outer, inner);
-        //     var b = this.obsticles.create(p.x, p.y,  'block');
-
-        //     this.physics.add.existing(b);
-
-        // }
 
         //Vanish block
         this.blockV = this.physics.add.sprite(300, game.config.height / 2, 'block').setScale(SCALE);
@@ -169,39 +151,42 @@ class Play extends Phaser.Scene {
 
         // randomly generates size of platform
         // this.platformLength = Math.floor(Math.random() * 1024);  moved inside Platforms.js
-        this.platformX = game.config.width * 2; // sets the X position of the platform on the right side of the screen
-        this.platformY = Phaser.Math.Between(game.config.height / 2, game.config.height - tileSize); // randomly generates a height for the platform
+        let platformX = game.config.width * 2; // sets the X position of the platform on the right side of the screen
+        let platformY = Phaser.Math.Between(game.config.height / 2, game.config.height - tileSize); // randomly generates a height for the platform
+        // let platformScaleX = Math.ceil(Math.random() * 32);
+        // let platformScaleY = Math.ceil(Math.random() * 24);
 
         // create platform
-        this.tileFloor = new Platform(this, this.platformX, this.platformY, 'groundBlock', this.platformVelocity);
+        let tileFloor = new Platform(
+            this,                       // scene
+            platformX,                  // X position
+            platformY,                  // Y position
+            // platformScaleX,             // X scale
+            // platformScaleY,             // Y scale
+            'groundBlock',              // texture
+            this.platformVelocity);     // velocity
 
         // add to tileGroup for collision physics
-        this.tileGroup.add(this.tileFloor);
+        this.tileGroup.add(tileFloor);
 
-        // // add obstacles inside Platform
-        // let genObstacle = new Obstacle(this, this.platformX + 32, this.platformY - 64, 'Obstacle', this.platformVelocity);
+        // add box obstacles inside Platform
+        if (tileFloor.scaleX > 12) {                                              // decides if platform is long enough
+            if (Math.ceil(Math.random() * 100) < this.spawnDifficulty) {        // % chance to spawn obstacle
+                let genObstacle = new Obstacle(
+                    this, 
+                    platformX + (Math.ceil(Math.random() * tileFloor.scaleX) * tileSize), 
+                    platformY - (tileSize * 3), 
+                    'Obstacle', 
+                    this.platformVelocity);
 
-        // this.obstacleGroup.add(genObstacle);
+                this.obstacleGroup.add(genObstacle);
 
+                this.physics.add.overlap(this.player, this.obstacleGroup, this.blockdestory, null, this);
+                this.physics.add.overlap(this.player, this.monster, this.monstertouch, null, this);
+            }
+        }
     }
 
-    addObstacle() { //here this function andy
-        //var outer = new Phaser.Geom.Rectangle(0, 0, 800, 600);
-        //var inner = new Phaser.Geom.Rectangle(350, 250, 100, 100);
-        //for (var i=0; i<2;i++){
-        //var p = Phaser.Geom.Rectangle.RandomOutside(outer, inner);
-        //var b = this.obsticles.create(this.game.config.width, p.y,  'block');
-
-        //this.physics.add.existing(b);
-        let obstacleGen = new Obstacle(this, this.platformX, game.config.height / 3, 'Obstacle', this.platformVelocity);
-
-        this.obstacleGroup.add(obstacleGen);
-        this.physics.add.overlap(this.player, this.obstacleGroup, this.blockdestory, null, this);
-        this.physics.add.overlap(this.player, this.monster, this.monstertouch, null, this);
-
-
-
-    }
 
 
     update() {
@@ -316,7 +301,7 @@ class Play extends Phaser.Scene {
             this.jumps--;
             this.jumping = false;
         }
-        console.log(this.platformVelocity)
+        // console.log(this.platformVelocity)
     }
 
 
@@ -333,7 +318,7 @@ class Play extends Phaser.Scene {
         this.time.delayedCall(600, () => {
             this.SCROLL_SPEED = 5;
         });
-        console.log(this.SCROLL_SPEED)
+        // console.log(this.SCROLL_SPEED)
 
     }
 
