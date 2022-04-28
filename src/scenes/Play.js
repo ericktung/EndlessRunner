@@ -329,7 +329,7 @@ class Play extends Phaser.Scene {
         this.playerMistake = 400;
         this.player.x = this.player.x * 0.9; // here
         this.SCROLL_SPEED = this.SCROLL_SPEED - 2;
-        this.time.delayedCall(200, () => {
+        this.time.delayedCall(600, () => {
             this.SCROLL_SPEED = 5;
         });
         console.log(this.SCROLL_SPEED)
