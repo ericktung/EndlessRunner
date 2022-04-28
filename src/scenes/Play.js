@@ -85,7 +85,7 @@ class Play extends Phaser.Scene {
 
         this.anims.create({
             key: "chomp",
-            frames: this.anims.generateFrameNumbers("monster", {frames: [0,1,2,3,4,5,6,7,8]}),
+            frames: this.anims.generateFrameNumbers("monster", { frames: [0, 1, 2, 3, 4, 5, 6, 7, 8] }),
             framerate: 8,
             repeat: -1
         });
@@ -120,7 +120,7 @@ class Play extends Phaser.Scene {
         //this.physics.add.collider(this.obsticles, this.tileGroup);
 
         this.physics.add.overlap(this.player, this.block, this.blockdestory, null, this); //counter dosent work
-        this.physics.add.overlap(this.player, this.obsticles, this.blockdestory, null, this); //counter dosent work
+        this.physics.add.overlap(this.player, this.obsticles, this.speedchange, null, this); //counter dosent work
 
         this.time.addEvent({
             delay: 1000,
@@ -197,6 +197,9 @@ class Play extends Phaser.Scene {
         this.obstacleGroup.add(obstacleGen);
         this.physics.add.overlap(this.player, this.obstacleGroup, this.blockdestory, null, this);
         this.physics.add.overlap(this.player, this.monster, this.monstertouch, null, this);
+
+
+
     }
 
 
@@ -235,6 +238,7 @@ class Play extends Phaser.Scene {
             this.playerMistake -= 1; // the playerMistake counter goes down when not in contact with a wall
 
         }
+
 
         if (this.playerMistake < 300) {
             this.monsterClose = false; // control monster spawns
@@ -311,6 +315,7 @@ class Play extends Phaser.Scene {
             this.jumps--;
             this.jumping = false;
         }
+        console.log(this.platformVelocity)
     }
 
 
@@ -319,20 +324,14 @@ class Play extends Phaser.Scene {
     }
     blockdestory(player, obsticles) { //destory block when it is touch
 
-            obsticles.destroy();
-            this.destroy = true;
-            this.playerMistake = 400;
-            this.obstuoch == true;
-        }
-        /*
-        addblock(){//trying to create a new block after it is destory
-            this.destroy=false
-            if (this.destory=true){
-                this.block = this.physics.add.sprite(360, game.config.height/2-tileSize, 'block').setScale(SCALE);
-                this.block.body.setAllowGravity(true).setVelocityX(-200);
-            }
-            
-        } */
+        obsticles.destroy();
+        this.destroy = true;
+        this.playerMistake = 400;
+        this.player.x = this.player.x * 0.9; // here
+        console.log("Touch")
+
+    }
+
 
     checkCollision(player, block) {
         // simple AABB checking
@@ -357,6 +356,5 @@ class Play extends Phaser.Scene {
         this.scoreText.setText('Score: ' + this.timerScore); // changes the score text to be updated every time function is called
 
     }
-
 
 }
