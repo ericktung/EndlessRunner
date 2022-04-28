@@ -33,7 +33,7 @@ class Play extends Phaser.Scene {
         this.JUMP_VELOCITY = -700;
         this.MAX_JUMPS = 1;
         this.platformVelocity = -400; // How fast the platforms move left across the screen
-        this.SCROLL_SPEED = 1;
+        this.SCROLL_SPEED = 5;
         this.counter = 0;
         this.physics.world.gravity.y = 2600;
         this.spawntime = 0
@@ -328,7 +328,11 @@ class Play extends Phaser.Scene {
         this.destroy = true;
         this.playerMistake = 400;
         this.player.x = this.player.x * 0.9; // here
-        console.log("Touch")
+        this.SCROLL_SPEED = this.SCROLL_SPEED - 2;
+        this.time.delayedCall(200, () => {
+            this.SCROLL_SPEED = 5;
+        });
+        console.log(this.SCROLL_SPEED)
 
     }
 
