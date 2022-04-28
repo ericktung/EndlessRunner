@@ -57,6 +57,7 @@ class Play extends Phaser.Scene {
         this.player.setOrigin(0.5, 0.5);
         this.playerMistake = 0;
         this.playerDeath = false;
+        this.player.body.setSize(this.player.width - 50, this.player.height, true)
 
         this.anims.create({
             key: "run",
@@ -353,7 +354,9 @@ class Play extends Phaser.Scene {
         this.platformVelocity -= 100; // speeds up the map based on the timed Event in Create()
 
     }
-
+    delay() {
+        this.player.body.setSize(this.player.width - 100, this.player.height, true)
+    }
     timeIncrease() {
 
         this.timerScore += 1;
