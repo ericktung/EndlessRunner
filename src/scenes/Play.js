@@ -33,6 +33,7 @@ class Play extends Phaser.Scene {
         this.counter = 0;
         this.physics.world.gravity.y = 2600;
         this.spawntime = 0
+        this.obstuoch == false;
         cursors = this.input.keyboard.createCursorKeys();
         this.BG2 = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'BG2').setOrigin(0);
         this.BG3 = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'BG3').setOrigin(0);
@@ -184,6 +185,7 @@ class Play extends Phaser.Scene {
 
         this.obstacleGroup.add(obstacleGen);
         this.physics.add.overlap(this.player, this.obstacleGroup, this.blockdestory, null, this);
+        this.physics.add.overlap(this.player, this.monster, this.monstertouch, null, this);
     }
 
 
@@ -236,7 +238,7 @@ class Play extends Phaser.Scene {
         }
 
         if (this.player.y >= game.config.height + 128 ||
-            this.player.x <= -128) {
+            this.player.x <= -900) {
 
             this.scene.start("GameOver"); // game ends if player falls off map, adjust for leniency
         }
@@ -301,12 +303,15 @@ class Play extends Phaser.Scene {
     }
 
 
-
+    monstertouch() {
+        this.scene.start("GameOver");
+    }
     blockdestory(player, obsticles) { //destory block when it is touch
 
             obsticles.destroy();
             this.destroy = true;
-            this.playerMistake = 500;
+            this.playerMistake = 400;
+            this.obstuoch == true;
         }
         /*
         addblock(){//trying to create a new block after it is destory
