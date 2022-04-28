@@ -26,10 +26,13 @@ h1 {
 
 p {
     font-family: "Nanum Pen Script", Consolas;
-    color: white;
-    font-size: 25px;
+    color: #5ec39d;
+    font-size: 30px;
     line-height: 20px;
     text-align: center;
+    padding: 20%;
+    padding-top: 0%;
+    padding-bottom: 0%;
 }
 
 a {

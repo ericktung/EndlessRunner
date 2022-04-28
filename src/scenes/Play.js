@@ -14,6 +14,11 @@ class Play extends Phaser.Scene {
         this.load.image("BG3",'Bg3.png');
         this.load.image("Obstacle", "Obstacle.png");
         this.load.image('groundBlock', 'groundBlock.png');
+
+        this.load.spritesheet("runner", "runner-sheet.png", {
+            frameWidth: 128,
+            frameHeight: 128
+        });
     }
     create(){
         keyENTER = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
@@ -43,11 +48,25 @@ class Play extends Phaser.Scene {
         this.groundTile.tint = 0xF73D6E;
 
         // create player
-        this.player = this.physics.add.sprite(256, game.config.height / 2 + tileSize, 'player');
+        this.player = this.physics.add.sprite(256, game.config.height / 2 + tileSize, 'runner');
         this.player.setOrigin(0.5, 0.5);
-        this.player.setScale(1, 3);
         this.playerMistake = 0;
         this.playerDeath = false;
+
+        this.anims.create({
+            key: "run",
+            frames: this.anims.generateFrameNumbers("runner", {frames:[0,1,2,3,4,5,6,7]}),
+            frameRate: 12,
+            repeat: -1
+        })
+
+        this.anims.create({
+            key: "jump",
+            frames: this.anims.generateFrameNumbers("runner", {frames:[9,10,10,9]}),
+            frameRate: 8
+        })
+
+        this.player.anims.play("run");
 
         // create monster
         this.monster = this.physics.add.sprite(-256, 428, 'Obstacle');
@@ -254,7 +273,10 @@ class Play extends Phaser.Scene {
 	    // if so, we have jumps to spare
 	    if(this.player.isGrounded) {
             //this.player.anims.play('walk', true);
-	    	this.jumps = this.MAX_JUMPS;
+	    	this.player.on("animationcomplete", () => {
+                this.player.anims.play("run");
+            })
+            this.jumps = this.MAX_JUMPS;
 	    	this.jumping = false;
             this.player.body.velocity.x = 0;            // makes sure the player velocity is 0 when grounded
 	    } else {
@@ -266,6 +288,7 @@ class Play extends Phaser.Scene {
 	        this.player.body.velocity.y = this.JUMP_VELOCITY;
 	        this.jumping = true;
             this.player.body.velocity.x = 100;          // allows the player to move forward ONLY when jumping
+            this.player.anims.play("jump");
 	    } 
         if (this.player.body.x >= game.config.width/2) {
             this.player.body.velocity.x = 0;            // stops the player from gaining momentum after reaching the halfway point of the screen
