@@ -19,6 +19,10 @@ class Play extends Phaser.Scene {
             frameWidth: 128,
             frameHeight: 128
         });
+        this.load.spritesheet("monster", "lover-sheet.png", {
+            frameWidth: 384,
+            frameHeight: 384
+        });
     }
     create() {
         keyENTER = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
@@ -72,12 +76,20 @@ class Play extends Phaser.Scene {
         // create monster
         this.monster = this.physics.add.sprite(-256, 428, 'Obstacle');
         this.monster.setOrigin(0.5, 0.5);
-        this.monster.setScale(4, 32);
         this.monster.setImmovable();
+        this.monster.setScale(4, 32);
         this.monster.enableBody();
         this.monster.body.setAllowGravity(false);
         this.monsterClose = false;
         this.monster.tint = 0xFFC700;
+
+        this.anims.create({
+            key: "chomp",
+            frames: this.anims.generateFrameNumbers("monster", {frames: [0,1,2,3,4,5,6,7,8]}),
+            framerate: 8,
+            repeat: -1
+        });
+
 
         // this.obsticles = this.physics.add.group({//eiser way to create obsticales
         //     key :'block',
@@ -132,11 +144,10 @@ class Play extends Phaser.Scene {
             loop: true
         });
         let scoreConfig = {
-            fontFamily: 'Courier',
+            fontFamily: 'Ruluko',
             fontSize: '28px',
-            backgroundColor: '#F3B141',
-            color: '#843605',
-            align: 'right',
+            color: 'white',
+            align: 'left',
             padding: {
                 top: 5,
                 bottom: 5,

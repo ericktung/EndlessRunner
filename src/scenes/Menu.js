@@ -11,7 +11,7 @@ class Menu extends Phaser.Scene {
  create(){
     this.SCROLL_SPEED = 1;
     let menuConfig = {
-        fontFamily: 'Cursive',
+        fontFamily: 'Ruluko',
         fontSize: '30px',
         backgroundImage: 'background',
         color: 'white',
