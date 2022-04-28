@@ -90,12 +90,12 @@ class Play extends Phaser.Scene {
         this.physics.add.overlap(this.player,this.block,this.blockdestory,null,this);//counter dosent work
         this.physics.add.overlap(this.player,this.obsticles,this.blockdestory,null,this);//counter dosent work
         
-        // this.time.addEvent({
-        //     delay: 1000,
-        //     callback: this.addObstacle,
-        //     callbackScope: this,
-        //     loop: true
-        // });
+        this.time.addEvent({
+            delay: 1000,
+            callback: this.addObstacle,
+            callbackScope: this,
+            loop: true
+        });
 
         this.time.addEvent({
             delay: 10000,
@@ -129,7 +129,7 @@ class Play extends Phaser.Scene {
         this.time.delayedCall(500, () => { 
             this.addPlatform(); 
         });
-        this.tileGroup = this.add.group({runChildUpdate: true});        // tileGroup currently does not work
+        this.tileGroup = this.add.group({runChildUpdate: true});        
         this.obstacleGroup = this.add.group({runChildUpdate: true});
     }
     
@@ -146,6 +146,11 @@ class Play extends Phaser.Scene {
         // add to tileGroup for collision physics
         this.tileGroup.add(this.tileFloor);
 
+        // // add obstacles inside Platform
+        // let genObstacle = new Obstacle(this, this.platformX + 32, this.platformY - 64, 'Obstacle', this.platformVelocity);
+
+        // this.obstacleGroup.add(genObstacle);
+
        }
 
        addObstacle() {      //here this function andy
@@ -156,13 +161,11 @@ class Play extends Phaser.Scene {
             //var b = this.obsticles.create(this.game.config.width, p.y,  'block');
              
             //this.physics.add.existing(b);
-        this.obstacleGen = new Obstacle(this, game.config.width/2, game.config.height/2, 'Obstacle', this.platformVelocity);
+        let obstacleGen = new Obstacle(this, game.config.width/2, game.config.height/2, 'Obstacle', this.platformVelocity);
 
-        this.obstacleGroup.add(this.obstacleGen);
+        this.obstacleGroup.add(obstacleGen);
 
-        this.physics.world.collide(this.obstacleGen, this.tileGroup);
-
-        }
+       }
 
 
     update() {
