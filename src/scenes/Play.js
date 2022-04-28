@@ -156,7 +156,7 @@ class Play extends Phaser.Scene {
         
         // randomly generates size of platform
         // this.platformLength = Math.floor(Math.random() * 1024);  moved inside Platforms.js
-        this.platformX = game.config.width;                             // sets the X position of the platform on the right side of the screen
+        this.platformX = game.config.width * 2;                             // sets the X position of the platform on the right side of the screen
         this.platformY = Phaser.Math.Between(game.config.height / 2, game.config.height - tileSize);     // randomly generates a height for the platform
 
         // create platform
@@ -180,9 +180,9 @@ class Play extends Phaser.Scene {
             //var b = this.obsticles.create(this.game.config.width, p.y,  'block');
              
             //this.physics.add.existing(b);
-        let obstacleGen = new Obstacle(this, game.config.width/2, game.config.height/2, 'Obstacle', this.platformVelocity);
+            let obstacleGen = new Obstacle(this, this.platformX, game.config.height/3, 'Obstacle', this.platformVelocity);
 
-        this.obstacleGroup.add(obstacleGen);
+            this.obstacleGroup.add(obstacleGen);
 
        }
 
@@ -230,7 +230,6 @@ class Play extends Phaser.Scene {
         }
 
         if (this.monsterClose == true) {
-            this.time.delayedCall(20000, () => {monsterNotClose()});
             this.monster.setX(16);
         } else if(this.monsterClose == false) {
             this.monster.setX(-256);
@@ -300,11 +299,6 @@ class Play extends Phaser.Scene {
 	    	this.jumping = false;
 	    }
     }
-        
-    monsterNotClose(){
-        this.monsterClose = false;
-    }
-    
 
 
     

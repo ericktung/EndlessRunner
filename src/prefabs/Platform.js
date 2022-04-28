@@ -41,7 +41,7 @@ class Platform extends Phaser.Physics.Arcade.Sprite {
         if (this.getTopRight.x < 0) {       // destroys rectangle once the last pixel of it reaches the left of the screen
             this.destroy();
         }
-        if (this.playerEnd && this.getTopRight().x <= game.config.width) {      // only calls when last pixel touches right side of screen
+        if (this.playerEnd && this.getTopRight().x <= game.config.width * 2) {      // only calls when last pixel touches right side of screen
             this.playerEnd = false;         // recursively calls function to permanentaly spawn platforms
             this.scene.addPlatform();
         }

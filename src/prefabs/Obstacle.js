@@ -7,9 +7,9 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite {
         
         this.setTexture(texture);
         this.setImmovable(false);
-        this.setVelocityX(velocity);
         this.body.setGravity(0, 5);
         this.enableBody();
+        this.velocityX = velocity;
 
         this.setScale(Math.ceil(Math.random() * 8));        // Randomizes size of obstacle (subject to tweaking)
 
@@ -26,6 +26,9 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite {
         
         if (this.getTopRight.x < -10){
             this.destroy();
+        }
+        if (this.body.touching.down) {
+            this.setVelocityX(this.velocityX);
         }
         if (this.getTopRight.x < game.config.width / 3 && this.playerPass) {
             this.playerPass = false;
