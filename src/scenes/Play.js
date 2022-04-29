@@ -51,9 +51,8 @@ class Play extends Phaser.Scene {
         this.spawnDifficulty = 100;          // percentage based obstacle spawner
         this.scaleDifficulty = 1;           // starts at level 1, improves over time
 
-        // This generates the first platform that the player can stand on. Timings subject to change
-        let randomGenNumber = (Math.floor(Math.random() * 8) * 16);
-        this.groundTile = this.physics.add.sprite(0, game.config.height - randomGenNumber - tileSize, 'groundBlock').setScale(128, 64).setOrigin(0);
+        // This generates the first platform that the player can stand on.
+        this.groundTile = this.physics.add.sprite(0, game.config.height - 64, 'groundBlock').setScale(128, 64).setOrigin(0);
         this.groundTile.setVelocityX(this.platformVelocity);
         this.groundTile.setImmovable(true);
         this.groundTile.body.setAllowGravity(false);
@@ -282,7 +281,7 @@ class Play extends Phaser.Scene {
             this.player.body.height = 112;
         }
         
-        if (this.player.body.x >= game.config.width / 2) {
+        if (this.player.body.x >= ((game.config.width / 8) * 3)) {
             this.player.body.velocity.x = 0;            // stops the player from gaining momentum after reaching the halfway point of the screen
         }
         
