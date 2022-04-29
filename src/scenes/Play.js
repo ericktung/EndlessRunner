@@ -218,7 +218,7 @@ class Play extends Phaser.Scene {
         if (this.player.body.touching.down && !this.playerObstacleOverlap) {
             
             this.player.body.offset.x =  32;            // sets the hitbox of the player while running
-            this.player.body.offset.y = 24;
+            this.player.body.offset.y = 32;
             this.player.body.width = 64;            
             this.player.body.height = 96;
 
@@ -242,7 +242,7 @@ class Play extends Phaser.Scene {
             this.player.body.offset.x =  32;            // sets the hitbox of the player while jumping
             this.player.body.offset.y = 8;
             this.player.body.width = 64;            
-            this.player.body.height = 112;
+            this.player.body.height = 120;
         }
         
         if (this.player.body.x >= ((game.config.width / 8) * 3)) {
