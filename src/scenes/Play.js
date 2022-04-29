@@ -169,11 +169,11 @@ class Play extends Phaser.Scene {
         this.tileGroup.add(tileFloor);
 
         // add box obstacles inside Platform
-        if (tileFloor.scaleX > 12) {                                              // decides if platform is long enough
+        if (tileFloor.scaleX > 16) {                                              // decides if platform is long enough
             if (Math.ceil(Math.random() * 100) < this.spawnDifficulty) {          // % chance to spawn obstacle
                 let genObstacle = new Obstacle(
                     this, 
-                    platformX + (Math.ceil(Math.random() * tileFloor.scaleX)),
+                    Phaser.Math.Between(platformX + tileSize, (platformX + (tileSize * tileFloor.scaleX) - (tileSize * 3))),
                     platformY - (tileSize * 3), 
                     'Obstacle', 
                     currentVelocity);
@@ -237,10 +237,10 @@ class Play extends Phaser.Scene {
             this.monster.setX(-256);
         }
 
-        if (this.player.y >= game.config.height + 256 ||
-            this.player.x <= -128) {
+        if (this.player.y >= game.config.height + 256 ||        
+            this.player.x <= -128) {                            // world death bounds
 
-            this.scene.start("GameOver"); // game ends if player falls off map, adjust for leniency
+            this.scene.start("GameOver"); 
         }
 
         // update tile sprites (tweak for more "speed")
