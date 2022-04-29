@@ -12,6 +12,8 @@ class Play extends Phaser.Scene {
         this.load.image("BG3", 'BG3.png');
         this.load.image("Obstacle", "Obstacle.png");
         this.load.image('groundBlock', 'groundBlock.png');
+        this.load.image('Bouquet', 'bouquet.png');
+        this.load.image('heartSpikes', 'heartSpikes.png');
 
         this.load.spritesheet("runner", "runner-sheet.png", {
             frameWidth: 128,
@@ -60,7 +62,7 @@ class Play extends Phaser.Scene {
         this.groundTile.setDepth(8);
         this.groundTile.tint = 0xF73D6E;
 
-        // create player
+        // create player and animations
         this.player = this.physics.add.sprite(256, game.config.height / 2 + tileSize, 'runner');
         this.player.setOrigin(0.5, 0.5);
         this.playerMistake = 0;
@@ -68,23 +70,20 @@ class Play extends Phaser.Scene {
         this.player.setSize(64, 128);
         this.player.setDepth(10);
         this.playerObstacleOverlap = false;
-
         this.anims.create({
             key: "run",
             frames: this.anims.generateFrameNumbers("runner", { frames: [0, 1, 2, 3, 4, 5, 6, 7] }),
             frameRate: 12,
             repeat: -1
         })
-
         this.anims.create({
             key: "jump",
             frames: this.anims.generateFrameNumbers("runner", { frames: [9, 10, 10, 9] }),
             frameRate: 8
         })
-
         this.player.anims.play("run");
 
-        // create monster
+        // create monster and animations
         this.monster = this.physics.add.sprite(-700, game.config.height - tileSize*8, 'monster');
         this.monster.setOrigin(0.5, 0.5);
         this.monster.setImmovable();
@@ -96,7 +95,6 @@ class Play extends Phaser.Scene {
         this.monster.setRotation(-Math.PI / 12);
         this.monster.body.setAllowGravity(false);
         this.monsterClose = false;
-
         this.anims.create({
             key: "chomp",
             frames: this.anims.generateFrameNumbers("monster", { frames: [0, 1, 2, 3, 4, 5, 6, 7, 8] }),
@@ -104,15 +102,14 @@ class Play extends Phaser.Scene {
             repeat: -1,
             repeatDelay: 1500
         });
-
         this.monster.anims.play("chomp");
 
-        this.obstacleList = [
-            '32 x 32',
-            'Obstacle',
-            'placeholder 1',
-            'placeholder 2'
-        ]
+        this.obstacleList = {
+            'heartSpikes': 2,           // the Y multiplier we need to 'place' the obstacle on the floor
+            'Bouquet': 6,               
+            'Obstacle': 3,
+            'placeholder 2': 1
+        };
 
         this.time.addEvent({
             delay: 10000,
@@ -281,16 +278,15 @@ class Play extends Phaser.Scene {
         // add to tileGroup for collision physics
         this.tileGroup.add(tileFloor);
 
-        let obstacleSelector = Math.floor(Math.random() * 4);       // randomizes selection of obstacles
-
+        let obstacleSelector = Math.floor(Math.random() * 3);       // randomizes selection of obstacles
         // add box obstacles inside Platform
         if (tileFloor.scaleX > 16) {                                              // decides if platform is long enough
             if (Math.ceil(Math.random() * 100) < this.spawnDifficulty) {          // % chance to spawn obstacle
                 let genObstacle = new Obstacle(
                     this, 
-                    Phaser.Math.Between(platformX + tileSize, (platformX + (tileSize * tileFloor.scaleX) - (tileSize * 6))),
-                    platformY - (tileSize * 3), 
-                    this.obstacleList[1],               // replace with obstacleSelector later
+                    Phaser.Math.Between(platformX + tileSize * 2, (platformX + (tileSize * tileFloor.scaleX) - (tileSize * 6))),
+                    platformY - (tileSize * this.obstacleList[Object.keys(this.obstacleList)[obstacleSelector]]),           
+                    Object.keys(this.obstacleList)[obstacleSelector],                       // texture
                     currentVelocity);
 
                 this.obstacleGroup.add(genObstacle);
