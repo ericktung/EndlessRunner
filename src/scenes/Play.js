@@ -149,35 +149,34 @@ class Play extends Phaser.Scene {
 
     addPlatform() {
 
-        // randomly generates size of platform
-        // this.platformLength = Math.floor(Math.random() * 1024);  moved inside Platforms.js
         let platformX = game.config.width * 2; // sets the X position of the platform on the right side of the screen
         let platformY = Phaser.Math.Between(game.config.height / 2, game.config.height - tileSize); // randomly generates a height for the platform
-        // let platformScaleX = Math.ceil(Math.random() * 32);
-        // let platformScaleY = Math.ceil(Math.random() * 24);
 
+        let slower = this.platformVelocity + 25;            // slightly randomizes platform speed
+        let faster = this.platformVelocity - 25;
+
+        let currentVelocity = Phaser.Math.Between(slower, faster);
+        
         // create platform
         let tileFloor = new Platform(
             this,                       // scene
             platformX,                  // X position
             platformY,                  // Y position
-            // platformScaleX,             // X scale
-            // platformScaleY,             // Y scale
             'groundBlock',              // texture
-            this.platformVelocity);     // velocity
+            currentVelocity);     // velocity
 
         // add to tileGroup for collision physics
         this.tileGroup.add(tileFloor);
 
         // add box obstacles inside Platform
         if (tileFloor.scaleX > 12) {                                              // decides if platform is long enough
-            if (Math.ceil(Math.random() * 100) < this.spawnDifficulty) {        // % chance to spawn obstacle
+            if (Math.ceil(Math.random() * 100) < this.spawnDifficulty) {          // % chance to spawn obstacle
                 let genObstacle = new Obstacle(
                     this, 
-                    platformX + (Math.ceil(Math.random() * tileFloor.scaleX) * tileSize), 
+                    platformX + (Math.ceil(Math.random() * tileFloor.scaleX)),
                     platformY - (tileSize * 3), 
                     'Obstacle', 
-                    this.platformVelocity);
+                    currentVelocity);
 
                 this.obstacleGroup.add(genObstacle);
 
@@ -216,7 +215,7 @@ class Play extends Phaser.Scene {
         if (this.player.body.touching.right) {
 
             this.player.body.velocity.x = 200; // if player is stuck on the wall, they can escape
-            this.playerMistake += 10; // if the player's right side touches any object, it counts as a mistake
+            // this.playerMistake += 10; // if the player's right side touches any object, it counts as a mistake
             //console.log(this.platformVelocity);   // test case
 
         } else if (this.playerMistake > 0) {
@@ -238,8 +237,8 @@ class Play extends Phaser.Scene {
             this.monster.setX(-256);
         }
 
-        if (this.player.y >= game.config.height + 128 ||
-            this.player.x <= -900) {
+        if (this.player.y >= game.config.height + 256 ||
+            this.player.x <= -128) {
 
             this.scene.start("GameOver"); // game ends if player falls off map, adjust for leniency
         }
