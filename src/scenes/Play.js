@@ -48,7 +48,7 @@ class Play extends Phaser.Scene {
 
         // Difficulty variables
         this.platformVelocity = -450;       // How fast the platforms move left across the screen
-        this.spawnDifficulty = 100;          // percentage based obstacle spawner
+        this.spawnDifficulty = 30;          // percentage based obstacle spawner
         this.scaleDifficulty = 1;           // starts at level 1, improves over time
 
         // This generates the first platform that the player can stand on.
@@ -113,13 +113,6 @@ class Play extends Phaser.Scene {
             'placeholder 1',
             'placeholder 2'
         ]
-
-        this.time.addEvent({
-            delay: 1000,
-            callback: this.addObstacle,
-            callbackScope: this,
-            loop: true
-        });
 
         this.time.addEvent({
             delay: 10000,
@@ -208,6 +201,7 @@ class Play extends Phaser.Scene {
             this.monster.body.offset.y = 64;
             this.monster.body.width = 288;            
             this.monster.body.height = 288;
+
         } else if (this.monsterClose == false) {
             this.monster.setX(-700);
         }
@@ -274,7 +268,6 @@ class Play extends Phaser.Scene {
 
         let slower = this.platformVelocity + 25;            // slightly randomizes platform speed
         let faster = this.platformVelocity - 25;
-
         let currentVelocity = Phaser.Math.Between(slower, faster);
         
         // create platform
