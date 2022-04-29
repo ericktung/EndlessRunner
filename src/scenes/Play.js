@@ -273,7 +273,6 @@ class Play extends Phaser.Scene {
             this,                       // scene
             platformX,                  // X position
             platformY,                  // Y position
-            'groundBlock',              // texture
             this.scaleDifficulty,       // platform color
             currentVelocity);     // velocity
 
