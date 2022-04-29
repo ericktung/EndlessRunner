@@ -64,6 +64,7 @@ class Play extends Phaser.Scene {
         this.playerDeath = false;
         this.player.setSize(64, 128);
         this.player.setDepth(2);
+        this.playerObstacleOverlap = false;
 
         this.anims.create({
             key: "run",
@@ -203,50 +204,41 @@ class Play extends Phaser.Scene {
     update() {
 
         console.log(this.playerMistake);          // debug
-        //console.log(this.monster.x, this.monster.y);
+        console.log(this.player.x, this.player.y);
+
+        // background scroll (tweak for more "speed")
+        this.BG2.tilePositionX += this.SCROLL_SPEED;
+        this.BG3.tilePositionX += this.SCROLL_SPEED + 1;
 
         if (this.playerDeath == false) {
-
             this.physics.world.collide(this.player, this.tileGroup);
-            this.physics.world.collide(this.player, this.obstacleGroup);
             this.physics.world.collide(this.player, this.monster);
-            this.physics.add.overlap(this.player, this.obstacleGroup, this.blockdestory, null, this);
+            this.playerObstacleOverlap = this.physics.add.overlap(this.player, this.obstacleGroup, () => this.playerMistake = 1000, null, this);
         } else {
             this.scene.start('GameOver');
         }
 
         if (this.timerScore > highScore) {
-
             highScore = this.timerScore;
         }
 
-        this.playerMistake -= 1;
+        this.playerMistake -= 1;            // playerMistake always going down
 
-        if (this.playerMistake < 300) {
+        if (this.playerMistake < 0) {
             this.monsterClose = false; // control monster spawns
         } else {
             this.monsterClose = true;
         }
 
         if (this.monsterClose == true) {
-            // this.time.delayedCall(
-            //     5000,
-            //     () => this.playerMistake = 200
-            // );
             this.monster.setX(16);
         } else if (this.monsterClose == false) {
             this.monster.setX(-256);
         }
 
-        if (this.player.y >= game.config.height + 256 ||        
-            this.player.x <= -128) {                            // world death bounds
-
-            this.scene.start("GameOver"); 
+        if (this.player.y >= game.config.height + 256 || this.player.x <= -128) {                            // world death bounds
+                this.scene.start("GameOver"); 
         }
-
-        // update tile sprites (tweak for more "speed")
-        this.BG2.tilePositionX += this.SCROLL_SPEED;
-        this.BG3.tilePositionX += this.SCROLL_SPEED + 1;
 
         //Phaser.Actions.IncX(this.obsticles.getChildren(),-this.SCROLL_SPEED)       
         //vanish block
@@ -265,9 +257,7 @@ class Play extends Phaser.Scene {
             //maybe put animation??
             //add counter
             // this.block.x = Phaser.Math.Between(0, game.config.width);
-            this.speedVelocity -= 5;
             this.timerScore += 1; // using (this.blockV) as a temp obstacle that increases platform speed and adds (5) to player score
-            this.scoreText
         }
 
         // check if alien is grounded
@@ -311,26 +301,16 @@ class Play extends Phaser.Scene {
             this.jumps--;
             this.jumping = false;
         }
-        if (this.player.body.touching.right) {
+        if (this.player.body.touching.right && !this.playerObstacleOverlap) {
             this.player.body.velocity.x = 200; // if player is stuck on the wall, they can escape
         }
     }
 
-    setPlayerMistake(mistake) {
-        this.playerMistake = mistake;
-    }
+    blockDestroy(player, obstacles) {       //destory block when it is touch 
 
-    blockdestory(player, obsticles) { //destory block when it is touch
-
-        obsticles.destroy();
-        this.destroy = true;
-        this.playerMistake = 400;
-        this.player.x = this.player.x * 0.9;    // here
-        // this.SCROLL_SPEED = this.SCROLL_SPEED - 2;
-        // this.time.delayedCall(600, () => {
-        //     this.SCROLL_SPEED = 5;
-        // });
-        // console.log(this.SCROLL_SPEED)
+        obstacles.destroy();
+        this.playerMistake = 1000;              // timer for how long the monster is on screen
+        player.x = player.x * 0.9;    // here
 
     }
 
