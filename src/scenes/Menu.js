@@ -4,16 +4,13 @@ class Menu extends Phaser.Scene {
         super("menuScene");
     }
     preload(){
-        this.load.image("BG1",'./asset/BG1.png');
-        this.load.image("BG2",'./asset/BG2.png');
-        this.load.image("BG3",'./asset/BG3.png');  
+        this.load.image("cutscene", "./asset/cutscene.png"); 
     }
  create(){
     this.SCROLL_SPEED = 1;
     let menuConfig = {
         fontFamily: 'Ruluko',
-        fontSize: '30px',
-        backgroundImage: 'background',
+        fontSize: '50px',
         color: 'white',
         align: 'right',
         padding: {
@@ -23,19 +20,32 @@ class Menu extends Phaser.Scene {
         fixedWidth: 0
     }
 
-    this.BG2=this.add.tileSprite(0,0, game.config.width, game.config.height, 'BG2').setOrigin(0);
-    this.BG3=this.add.tileSprite(0,0, game.config.width, game.config.height, 'BG3').setOrigin(0);
-    this.BG1=this.add.tileSprite(0,0, game.config.width, game.config.height, 'BG1').setOrigin(0);
+    this.add.image(0,0, 'cutscene').setOrigin(0);
+
 
     this.BG2.tint = 0x5EC39D;
 
     keyENTER = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
-    this.add.text(20,20,"Press Enter to play scene",menuConfig).setOrigin(0,0);
+    this.add.text(20,game.config.height/2+100, "HEART ♥ BREAKOUT", menuConfig);
+    menuConfig.fontSize = "30px";
+    this.play = this.add.text(20,game.config.height/2+180,"Press Enter to play",menuConfig).setOrigin(0,0);
+    var timer = this.time.addEvent({
+        delay: 500,                // ms
+        callback: () => {
+            this.play.alpha = 0
+        },
+        loop: true
+    });
+    this.time.addEvent({
+        delay: 1000,                // ms
+        callback: () => {
+            this.play.alpha = 1
+        },
+        loop: true
+    });
 }
  
  update(){
-    this.BG2.tilePositionX += this.SCROLL_SPEED;
-    this.BG3.tilePositionX += this.SCROLL_SPEED+1;
     if(Phaser.Input.Keyboard.JustDown(keyENTER)){
         this.scene.start("playScene");    
     }

@@ -139,6 +139,7 @@ class Play extends Phaser.Scene {
         }
 
         this.scoreText = this.add.text(game.config.width - tileSize * 16, tileSize * 4, "Score: " + this.timerScore, scoreConfig);
+        this.scoreText.setDepth(4)
 
         this.timerScore = 0;
         this.time.addEvent({
