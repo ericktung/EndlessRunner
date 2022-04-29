@@ -19,7 +19,6 @@ class Play extends Phaser.Scene {
         this.counter = 0;
         this.physics.world.gravity.y = 2600;
         this.spawntime = 0
-        this.obstuoch == false;
         cursors = this.input.keyboard.createCursorKeys();
 
         // create background
@@ -45,6 +44,7 @@ class Play extends Phaser.Scene {
         this.player = this.physics.add.sprite(256, game.config.height / 2 + tileSize, 'runner');
         this.player.setOrigin(0.5, 0.5);
         this.playerMistake = 0;
+        this.playerDanger = false;
         this.playerDeath = false;
         this.player.setSize(64, 128);
         this.player.setDepth(10);
@@ -128,10 +128,6 @@ class Play extends Phaser.Scene {
             loop: true
         });
 
-        // basic collision physics
-        this.physics.add.collider(this.player, this.groundTile);
-        this.physics.add.overlap(this.player, this.monster, () => this.playerDeath = true, null, this);
-
         // Creates first platform
         this.time.delayedCall(500, () => {
             this.addPlatform();
@@ -141,20 +137,27 @@ class Play extends Phaser.Scene {
         this.tileGroup = this.add.group({ runChildUpdate: true });
         this.obstacleGroup = this.add.group({ runChildUpdate: true });
 
+        // basic collision physics
+        this.physics.add.collider(this.player, this.groundTile);
         this.physics.add.collider(this.player, this.tileGroup);
-        this.physics.add.collider(this.player, this.monster);
         this.physics.add.overlap(
             this.player, 
+            this.monster, 
+            () => this.playerDeath = true, 
+            null, 
+            this);
+        this.obstacleLogic = this.physics.add.overlap(
+            this.player, 
             this.obstacleGroup, 
-            () => {this.playerMistake = 1500; this.playerObstacleOverlap = true}, 
+            this.playerInDanger, 
             null, 
             this);
     }
 
     update() {
 
-        // console.log(this.playerObstacleOverlap);          // debug
-        // console.log(this.playerMistake);
+        //console.log(this.playerDanger);          // debug
+        //console.log(this.monsterClose);
 
         // background scroll (tweak for more "speed")
         this.BG2.tilePositionX += this.SCROLL_SPEED;
@@ -180,30 +183,25 @@ class Play extends Phaser.Scene {
             this.spawnDifficulty = 60;
         } 
 
-        if (this.playerDeath == false) {
-            
-        } else {
-            this.scene.start('GameOver');
+        if (this.playerDeath == true) {
+            this.scene.start("GameOver");
         }
 
         // permanent updating variables
         this.playerMistake -= 1;            // playerMistake always going down
+        this.monster.body.offset.x =  128;          // updates the monster hitbox for every frame            
+        this.monster.body.offset.y = 64;
+        this.monster.body.width = 288;            
+        this.monster.body.height = 288;
 
         if (this.playerMistake < 0) {
             this.monsterClose = false; // control monster spawns
+            this.playerDanger = false;
         } else {
             this.monsterClose = true;
         }
-
-        if (this.monsterClose == true) {
-            this.monster.setX(-10);
-
-            this.monster.body.offset.x =  128;          // updates the monster hitbox for every frame            
-            this.monster.body.offset.y = 64;
-            this.monster.body.width = 288;            
-            this.monster.body.height = 288;
-
-        } else if (this.monsterClose == false) {
+        
+        if (this.monsterClose == false){
             this.monster.setX(-700);
         }
 
@@ -297,6 +295,20 @@ class Play extends Phaser.Scene {
                 this.obstacleGroup.add(genObstacle);
             }
         }
+    }
+
+    playerInDanger() {
+        this.obstacleLogic.active = false;
+        this.monster.setX(-10);
+        this.playerMistake = 1500;
+        this.playerObstacleOverlap = true;
+        if (this.playerDanger == true) {
+            this.monster.setX(this.player.x - 150);
+        } else {
+            this.playerDanger = true;
+        }
+        this.time.delayedCall(1000, () => {this.obstacleLogic.active = true});
+
     }
 
     timeIncrease() {
