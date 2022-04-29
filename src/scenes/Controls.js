@@ -19,7 +19,8 @@ class Controls extends Phaser.Scene {
             fixedWidth: 0
         }
         
-        this.add.image(0,0, 'cutscene').setOrigin(0);
+        this.cutscene = this.add.image(0,0, 'cutscene').setOrigin(0);
+        this.cutscene.setTint(0x777777);
         this.add.text(game.config.width/2, 48, 'Welcome to Heart Breakout!', controlConfig).setOrigin(0.5);
         controlConfig.fontSize = 42;
         this.add.text(game.config.width/2, 128, 'Use the (UP) arrow to jump', controlConfig).setOrigin(0.5);

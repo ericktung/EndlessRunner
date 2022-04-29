@@ -118,7 +118,7 @@ class Play extends Phaser.Scene {
         this.scoreText = this.add.text(game.config.width - tileSize * 16, tileSize * 4, "Score: " + this.timerScore, scoreConfig);
         this.scoreText.setDepth(4)
 
-        this.jumpsText = this.add.text(0 + tileSize * 16, tileSize * 4, "Jumps: " + this.jumps, scoreConfig);
+        this.jumpsText = this.add.text(0 + tileSize * 16, tileSize * 4, "Jumps: " + this.jumps, scoreConfig).setDepth(4);
 
         this.timerScore = 0;
         this.time.addEvent({

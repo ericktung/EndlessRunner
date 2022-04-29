@@ -18,7 +18,7 @@ class GameOver extends Phaser.Scene {
             fixedWidth: 0
         }
         
-        this.SCROLL_SPEED = 5;
+        this.SCROLL_SPEED = 1;
         
         this.BG2 = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'BG2').setOrigin(0);
         this.BG3 = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'BG3').setOrigin(0);
