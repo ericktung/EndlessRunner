@@ -140,6 +140,15 @@ class Play extends Phaser.Scene {
         // basic groups for platform and obstacle generation
         this.tileGroup = this.add.group({ runChildUpdate: true });
         this.obstacleGroup = this.add.group({ runChildUpdate: true });
+
+        this.physics.add.collider(this.player, this.tileGroup);
+        this.physics.add.collider(this.player, this.monster);
+        this.physics.add.overlap(
+            this.player, 
+            this.obstacleGroup, 
+            () => {this.playerMistake = 1500; this.playerObstacleOverlap = true}, 
+            null, 
+            this);
     }
 
     update() {
@@ -172,14 +181,7 @@ class Play extends Phaser.Scene {
         } 
 
         if (this.playerDeath == false) {
-            this.physics.world.collide(this.player, this.tileGroup);
-            this.physics.world.collide(this.player, this.monster);
-            this.physics.add.overlap(
-                this.player, 
-                this.obstacleGroup, 
-                () => {this.playerMistake = 1000; this.playerObstacleOverlap = true}, 
-                null, 
-                this);
+            
         } else {
             this.scene.start('GameOver');
         }
