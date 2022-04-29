@@ -27,6 +27,8 @@ class Menu extends Phaser.Scene {
     this.BG3=this.add.tileSprite(0,0, game.config.width, game.config.height, 'BG3').setOrigin(0);
     this.BG1=this.add.tileSprite(0,0, game.config.width, game.config.height, 'BG1').setOrigin(0);
 
+    this.BG2.tint = 0x5EC39D;
+
     keyENTER = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
     this.add.text(20,20,"Press Enter to play scene",menuConfig).setOrigin(0,0);
 }

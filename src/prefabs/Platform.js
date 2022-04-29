@@ -1,9 +1,9 @@
 class Platform extends Phaser.Physics.Arcade.Sprite {
-    constructor(scene, x, y, texture, velocity) {
+    constructor(scene, x, y, texture, difficulty,velocity) {
 
         // Creates rectangle with randomized X and Y
         // Spawns rectangle slightly off screen to the right, note the setOrigin(0.1, 0)
-        super(scene, x, y, texture, velocity).setOrigin(0.1, 0);
+        super(scene, x, y, texture, difficulty, velocity).setOrigin(0.1, 0);
 
         scene.add.existing(this);
         scene.physics.add.existing(this);
@@ -24,16 +24,109 @@ class Platform extends Phaser.Physics.Arcade.Sprite {
         this.length = length;
         this.playerEnd = true;      // old variables
 
-        this.colorList = [
-            0xF73D6E,           // sherbet
-            0xF7693D,           // orange
-            0xF73DCB,           // hot pink
-            0xFFC700,           // yellow
-            0xFF0038            // red
+        this.colorList1 = [
+            0xF73D6E,           // pink gradient
+            0xEA3061,           
+            0xDE2455,           
+            0xD11748,           
+            0xB7002E            
         ];
 
-        this.tint = this.colorList[0]             //this.colorList[Math.floor(Math.random() * 5)];
+        this.colorList2 = [
+            0x980000,
+            0x7F0000,           // red gradient
+            0x650000,
+            0x4C0000,
+            0x320000
+        ];
 
+        this.colorList3 = [
+            0x368F00,
+            0x1D7600,           // green gradient
+            0x035C00,
+            0x004300,
+            0x003900
+        ];
+
+        this.colorList4 = [
+            0x5CCACB,           // teal gradient
+            0x43B1B2,
+            0x299798,
+            0x107E7F,
+            0x006465
+        ];
+
+        if (difficulty == 1) {
+            if (y <= 332) {
+                this.tint = this.colorList1[0];
+            }
+            if (y > 332 && y <= 400) {
+                this.tint = this.colorList1[1];
+            }
+            if (y > 400 && y <= 464) {
+                this.tint = this.colorList1[2];
+            }
+            if (y > 464 && y <= 528) {
+                this.tint = this.colorList1[3];
+            }
+            if (y > 528) {
+                this.tint = this.colorList1[4];
+            }
+        }
+
+        if (difficulty == 2) {
+            if (y <= 332) {
+                this.tint = this.colorList2[0];
+            }
+            if (y > 332 && y <= 400) {
+                this.tint = this.colorList2[1];
+            }
+            if (y > 400 && y <= 464) {
+                this.tint = this.colorList2[2];
+            }
+            if (y > 464 && y <= 528) {
+                this.tint = this.colorList2[3];
+            }
+            if (y > 528) {
+                this.tint = this.colorList2[4];
+            }
+        }
+
+        if (difficulty == 3) {
+            if (y <= 332) {
+                this.tint = this.colorList3[0];
+            }
+            if (y > 332 && y <= 400) {
+                this.tint = this.colorList3[1];
+            }
+            if (y > 400 && y <= 464) {
+                this.tint = this.colorList3[2];
+            }
+            if (y > 464 && y <= 528) {
+                this.tint = this.colorList3[3];
+            }
+            if (y > 528) {
+                this.tint = this.colorList3[4];
+            }
+        }
+        
+        if (difficulty >= 4) {
+            if (y <= 332) {
+                this.tint = this.colorList4[0];
+            }
+            if (y > 332 && y <= 400) {
+                this.tint = this.colorList4[1];
+            }
+            if (y > 400 && y <= 464) {
+                this.tint = this.colorList4[2];
+            }
+            if (y > 464 && y <= 528) {
+                this.tint = this.colorList4[3];
+            }
+            if (y > 528) {
+                this.tint = this.colorList4[4];
+            }
+        }
 
     }
     update() {

@@ -49,7 +49,7 @@ class Play extends Phaser.Scene {
         this.BG3 = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'BG3').setOrigin(0).setDepth(1);
 
         // Difficulty variables
-        this.platformVelocity = -450;       // How fast the platforms move left across the screen
+        this.platformVelocity = -400;       // How fast the platforms move left across the screen
         this.spawnDifficulty = 30;          // percentage based obstacle spawner
         this.scaleDifficulty = 1;           // starts at level 1, improves over time
 
@@ -113,10 +113,17 @@ class Play extends Phaser.Scene {
 
         this.time.addEvent({
             delay: 10000,
-            callback: this.speedIncrease, // speeds up the map every 10 seconds
+            callback: () => {this.platformVelocity -= 25}, // speeds up the map every 10 seconds
             callbackScope: this,
             loop: true
         });
+
+        this.time.addEvent({
+            delay: 45000,
+            callback: () => {this.scaleDifficulty += 1},
+            callbackScope: this,
+            loop: true
+        })
 
         // score and time configs
         let scoreConfig = {
@@ -164,6 +171,26 @@ class Play extends Phaser.Scene {
         this.BG2.tilePositionX += this.SCROLL_SPEED;
         this.BG3.tilePositionX += this.SCROLL_SPEED + 1;
 
+        // highscore setter
+        if (this.timerScore > highScore) {
+            highScore = this.timerScore;
+        }
+
+        if (this.scaleDifficulty == 1)  {
+            this.BG2.tint = 0x5EC39D;
+            this.spawnDifficulty = 30;
+        } else if (this.scaleDifficulty == 2) {
+            this.BG1.tint = 0x00001D;
+            this.BG2.tint = 0x71CED2;
+            this.spawnDifficulty = 40;
+        } else if (this.scaleDifficulty == 3) {
+            this.BG2.tint = 0x440BD4;
+            this.spawnDifficulty = 50;
+        } else if (this.scaleDifficulty >= 4) {
+            this.BG2.tint = 0xF53E6E;
+            this.spawnDifficulty = 60;
+        } 
+
         if (this.playerDeath == false) {
             this.physics.world.collide(this.player, this.tileGroup);
             this.physics.world.collide(this.player, this.monster);
@@ -175,11 +202,6 @@ class Play extends Phaser.Scene {
                 this);
         } else {
             this.scene.start('GameOver');
-        }
-
-        // highscore setter
-        if (this.timerScore > highScore) {
-            highScore = this.timerScore;
         }
 
         // permanent updating variables
@@ -273,6 +295,7 @@ class Play extends Phaser.Scene {
             platformX,                  // X position
             platformY,                  // Y position
             'groundBlock',              // texture
+            this.scaleDifficulty,       // platform color
             currentVelocity);     // velocity
 
         // add to tileGroup for collision physics
@@ -292,21 +315,6 @@ class Play extends Phaser.Scene {
                 this.obstacleGroup.add(genObstacle);
             }
         }
-    }
-
-
-    blockDestroy(player, obstacles) {                    //destory block when it is touch 
-
-        obstacles.destroy();
-        this.playerMistake = 1000;                       // timer for how long the monster is on screen
-        player.x = player.x * 0.9;
-
-    }
-
-    speedIncrease() {
-
-        this.platformVelocity -= 100; // speeds up the map based on the timed Event in Create()
-
     }
 
     timeIncrease() {
