@@ -306,18 +306,6 @@ class Play extends Phaser.Scene {
 
     }
 
-
-    checkCollision(player, block) {
-        // simple AABB checking
-        if (player.x < block.x + block.width &&
-            player.x + player.width > block.x &&
-            player.y < block.y + block.height &&
-            player.height + player.y > block.y) {
-            return true;
-        } else {
-            return false;
-        }
-    }
     speedIncrease() {
 
         this.platformVelocity -= 100; // speeds up the map based on the timed Event in Create()
