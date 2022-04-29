@@ -15,6 +15,7 @@ class Play extends Phaser.Scene {
         // basic physics variables
         this.JUMP_VELOCITY = -700;
         this.MAX_JUMPS = 1;
+        this.jumps = 1;
         this.SCROLL_SPEED = 5;
         this.counter = 0;
         this.physics.world.gravity.y = 2600;
@@ -119,6 +120,8 @@ class Play extends Phaser.Scene {
 
         this.scoreText = this.add.text(game.config.width - tileSize * 16, tileSize * 4, "Score: " + this.timerScore, scoreConfig);
         this.scoreText.setDepth(4)
+
+        this.jumpsText = this.add.text(0 + tileSize * 16, tileSize * 4, "jumps: " + this.jumps, scoreConfig);
 
         this.timerScore = 0;
         this.time.addEvent({
@@ -226,6 +229,7 @@ class Play extends Phaser.Scene {
             })
             // player recieves a jump only when they have touched the floor
             this.jumps = this.MAX_JUMPS;
+            this.jumpsText.setText('Jumps:' + this.jumps);
             this.jumping = false;
             this.player.body.velocity.x = 0; // makes sure the player velocity is 0 when grounded (prevents sliding)
         }
@@ -252,6 +256,7 @@ class Play extends Phaser.Scene {
         // see: https://photonstorm.github.io/phaser3-docs/Phaser.Input.Keyboard.html#.UpDuration__anchor
         if (this.jumping && Phaser.Input.Keyboard.UpDuration(cursors.up)) {
             this.jumps--;
+            this.jumpsText.setText('Jumps:' + this.jumps);
             this.jumping = false;
         }
         
