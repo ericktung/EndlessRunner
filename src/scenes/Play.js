@@ -303,6 +303,8 @@ class Play extends Phaser.Scene {
     }
 
     playerInDanger() {
+        this.cameras.main.shake(250);
+
         this.obstacleLogic.active = false;
         this.monster.setX(-10);
         this.playerMistake = 1500;
