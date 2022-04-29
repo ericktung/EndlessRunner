@@ -4,14 +4,12 @@ class Play extends Phaser.Scene {
     constructor() {
         super("playScene");
     }
+
     preload() {
-        this.load.path = './asset/'; //set path to asset.
-        this.load.image('player', 'player.png');
-        this.load.image('block', 'block.png')
+        this.load.path = './asset/';                //set path to asset.
         this.load.image("BG1", 'BG1.png');
-        this.load.image("ground", 'ground.png');
         this.load.image("BG2", 'BG2.png');
-        this.load.image("BG3", 'Bg3.png');
+        this.load.image("BG3", 'BG3.png');
         this.load.image("Obstacle", "Obstacle.png");
         this.load.image('groundBlock', 'groundBlock.png');
 
@@ -24,12 +22,16 @@ class Play extends Phaser.Scene {
             frameHeight: 384
         });
     }
+
     create() {
+        // initialize input keys
         keyENTER = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
         keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
+
+        // basic physics variables
         this.JUMP_VELOCITY = -700;
         this.MAX_JUMPS = 1;
         this.SCROLL_SPEED = 5;
@@ -38,9 +40,11 @@ class Play extends Phaser.Scene {
         this.spawntime = 0
         this.obstuoch == false;
         cursors = this.input.keyboard.createCursorKeys();
+
+        // create background
+        this.BG1 = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'BG1').setOrigin(0);
         this.BG2 = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'BG2').setOrigin(0);
         this.BG3 = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'BG3').setOrigin(0);
-        this.BG1 = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'BG1').setOrigin(0);
 
         // Difficulty variables
         this.platformVelocity = -400;       // How fast the platforms move left across the screen
@@ -92,6 +96,8 @@ class Play extends Phaser.Scene {
         this.monsterClose = false;
         this.monster.tint = 0xFFC700;
 
+        // basic physics
+        this.physics.add.collider(this.player, this.groundTile);
         this.physics.add.overlap(this.player, this.monster, () => this.playerDeath = true, null, this);
 
         this.anims.create({
@@ -108,17 +114,6 @@ class Play extends Phaser.Scene {
             'placeholder 2'
         ]
 
-        //Vanish block
-        this.blockV = this.physics.add.sprite(300, game.config.height / 2, 'block').setScale(SCALE);
-        this.blockV.body.setAllowGravity(false).setVelocityX(-200);
-
-        this.physics.add.collider(this.player, this.groundTile);
-        // this.physics.add.collider(this.groundTile, this.obsticles)
-        //this.physics.add.collider(this.obsticles, this.tileGroup);
-
-        this.physics.add.overlap(this.player, this.block, this.blockdestory, null, this); //counter dosent work
-        this.physics.add.overlap(this.player, this.obsticles, this.speedchange, null, this); //counter dosent work
-
         this.time.addEvent({
             delay: 1000,
             callback: this.addObstacle,
@@ -133,13 +128,7 @@ class Play extends Phaser.Scene {
             loop: true
         });
 
-        this.timerScore = 0;
-        this.time.addEvent({
-            delay: 100,
-            callback: this.timeIncrease, // score display, 1 point every 100ms right now
-            callbackScope: this,
-            loop: true
-        });
+        // score and time configs
         let scoreConfig = {
             fontFamily: 'Ruluko',
             fontSize: '28px',
@@ -151,20 +140,31 @@ class Play extends Phaser.Scene {
             },
             fixedWidth: 0
         }
+
         this.scoreText = this.add.text(game.config.width - tileSize * 16, tileSize * 4, "Score: " + this.timerScore, scoreConfig);
+
+        this.timerScore = 0;
+        this.time.addEvent({
+            delay: 100,
+            callback: this.timeIncrease,                // score display, 1 point every 100ms right now
+            callbackScope: this,
+            loop: true
+        });
 
         // Creates first platform
         this.time.delayedCall(500, () => {
             this.addPlatform();
         });
+
+        // basic groups for platform and obstacle generation
         this.tileGroup = this.add.group({ runChildUpdate: true });
         this.obstacleGroup = this.add.group({ runChildUpdate: true });
     }
 
     addPlatform() {
 
-        let platformX = game.config.width * 2; // sets the X position of the platform on the right side of the screen
-        let platformY = Phaser.Math.Between(game.config.height / 2, game.config.height - tileSize); // randomly generates a height for the platform
+        let platformX = game.config.width * 2;              // sets the X position of the platform on the right side of the screen
+        let platformY = Phaser.Math.Between(game.config.height / 2, game.config.height - tileSize);         // randomly generates a height for the platform
 
         let slower = this.platformVelocity + 25;            // slightly randomizes platform speed
         let faster = this.platformVelocity - 25;
@@ -240,29 +240,14 @@ class Play extends Phaser.Scene {
                 this.scene.start("GameOver"); 
         }
 
-        //Phaser.Actions.IncX(this.obsticles.getChildren(),-this.SCROLL_SPEED)       
         //vanish block
         if (this.blockV.x < 0) {
             this.blockV.x = game.config.width;
         }
 
-        //if(this.checkCollision(this.player, this.block)) {
-        //maybe put animation??
-        //add counter
-        //this.block.x = Phaser.Math.Between(0, game.config.width);
-        //this.block.x=game.config.width;
-        //}
-        //checking vanish block collision
-        if (this.checkCollision(this.player, this.blockV)) {
-            //maybe put animation??
-            //add counter
-            // this.block.x = Phaser.Math.Between(0, game.config.width);
-            this.timerScore += 1; // using (this.blockV) as a temp obstacle that increases platform speed and adds (5) to player score
-        }
-
-        // check if alien is grounded
+        // check if player is grounded
         this.player.isGrounded = this.player.body.touching.down;
-        // if so, we have jumps to spare
+
         if (this.player.isGrounded) {
 
             this.player.body.offset.x =  32;            // sets the hitbox of the player while running
@@ -274,9 +259,10 @@ class Play extends Phaser.Scene {
                 this.player.anims.play("run");
             })
 
+            // player recieves a jump only when they have touched the floor
             this.jumps = this.MAX_JUMPS;
             this.jumping = false;
-            this.player.body.velocity.x = 0; // makes sure the player velocity is 0 when grounded
+            this.player.body.velocity.x = 0; // makes sure the player velocity is 0 when grounded (prevents sliding)
         }
         
         // allow steady velocity change up to a certain key down duration
@@ -284,7 +270,7 @@ class Play extends Phaser.Scene {
         if (this.jumps > 0 && Phaser.Input.Keyboard.DownDuration(cursors.up, 250)) {
             this.player.body.velocity.y = this.JUMP_VELOCITY;
             this.jumping = true;
-            this.player.body.velocity.x = 100; // allows the player to move forward ONLY when jumping
+            this.player.body.velocity.x = 100;          // allows the player to move forward ONLY when jumping
             this.player.anims.play("jump");
 
             this.player.body.offset.x =  32;            // sets the hitbox of the player while jumping
@@ -293,7 +279,7 @@ class Play extends Phaser.Scene {
             this.player.body.height = 112;
         }
         if (this.player.body.x >= game.config.width / 2) {
-            this.player.body.velocity.x = 0; // stops the player from gaining momentum after reaching the halfway point of the screen
+            this.player.body.velocity.x = 0;            // stops the player from gaining momentum after reaching the halfway point of the screen
         }
         // finally, letting go of the UP key subtracts a jump
         // see: https://photonstorm.github.io/phaser3-docs/Phaser.Input.Keyboard.html#.UpDuration__anchor
@@ -302,15 +288,15 @@ class Play extends Phaser.Scene {
             this.jumping = false;
         }
         if (this.player.body.touching.right && !this.playerObstacleOverlap) {
-            this.player.body.velocity.x = 200; // if player is stuck on the wall, they can escape
+            this.player.body.velocity.x = 200;           // if player is stuck on the wall, they can escape
         }
     }
 
-    blockDestroy(player, obstacles) {       //destory block when it is touch 
+    blockDestroy(player, obstacles) {                    //destory block when it is touch 
 
         obstacles.destroy();
-        this.playerMistake = 1000;              // timer for how long the monster is on screen
-        player.x = player.x * 0.9;    // here
+        this.playerMistake = 1000;                       // timer for how long the monster is on screen
+        player.x = player.x * 0.9;
 
     }
 
