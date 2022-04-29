@@ -44,7 +44,8 @@ class Play extends Phaser.Scene {
 
         // Difficulty variables
         this.platformVelocity = -400;       // How fast the platforms move left across the screen
-        this.spawnDifficulty = 30;          // percentage based obstacle spawner
+        this.spawnDifficulty = 100;          // percentage based obstacle spawner
+        this.scaleDifficulty = 1;           // starts at level 1, improves over time
 
         // This generates the first platform that the player can stand on. Timings subject to change
         let randomGenNumber = (Math.floor(Math.random() * 8) * 16);
@@ -53,6 +54,7 @@ class Play extends Phaser.Scene {
         this.groundTile.setImmovable(true);
         this.groundTile.body.setAllowGravity(false);
         this.groundTile.setFriction(0);
+        this.groundTile.setDepth(0);
         this.groundTile.tint = 0xF73D6E;
 
         // create player
@@ -61,6 +63,7 @@ class Play extends Phaser.Scene {
         this.playerMistake = 0;
         this.playerDeath = false;
         this.player.setSize(64, 128);
+        this.player.setDepth(2);
 
         this.anims.create({
             key: "run",
@@ -82,10 +85,13 @@ class Play extends Phaser.Scene {
         this.monster.setOrigin(0.5, 0.5);
         this.monster.setImmovable();
         this.monster.setScale(4, 32);
+        this.monster.setDepth(2);
         this.monster.enableBody();
         this.monster.body.setAllowGravity(false);
         this.monsterClose = false;
         this.monster.tint = 0xFFC700;
+
+        this.physics.add.overlap(this.player, this.monster, () => this.playerDeath = true, null, this);
 
         this.anims.create({
             key: "chomp",
@@ -93,6 +99,13 @@ class Play extends Phaser.Scene {
             framerate: 8,
             repeat: -1
         });
+
+        this.obstacleList = [
+            '32 x 32',
+            'Obstacle',
+            'placeholder 1',
+            'placeholder 2'
+        ]
 
         //Vanish block
         this.blockV = this.physics.add.sprite(300, game.config.height / 2, 'block').setScale(SCALE);
@@ -168,20 +181,19 @@ class Play extends Phaser.Scene {
         // add to tileGroup for collision physics
         this.tileGroup.add(tileFloor);
 
+        let obstacleSelector = Math.floor(Math.random() * 4);       // randomizes selection of obstacles
+
         // add box obstacles inside Platform
         if (tileFloor.scaleX > 16) {                                              // decides if platform is long enough
             if (Math.ceil(Math.random() * 100) < this.spawnDifficulty) {          // % chance to spawn obstacle
                 let genObstacle = new Obstacle(
                     this, 
-                    Phaser.Math.Between(platformX + tileSize, (platformX + (tileSize * tileFloor.scaleX) - (tileSize * 3))),
+                    Phaser.Math.Between(platformX + tileSize, (platformX + (tileSize * tileFloor.scaleX) - (tileSize * 6))),
                     platformY - (tileSize * 3), 
-                    'Obstacle', 
+                    this.obstacleList[1],               // replace with obstacleSelector later
                     currentVelocity);
 
                 this.obstacleGroup.add(genObstacle);
-
-                this.physics.add.overlap(this.player, this.obstacleGroup, this.blockdestory, null, this);
-                this.physics.add.overlap(this.player, this.monster, this.monstertouch, null, this);
             }
         }
     }
@@ -190,21 +202,17 @@ class Play extends Phaser.Scene {
 
     update() {
 
-        if (this.checkCollision(this.player, this.monster)) {
-            console.log("monster collide");
-        }
-
-        //console.log(this.playerMistake);          // debug
+        console.log(this.playerMistake);          // debug
         //console.log(this.monster.x, this.monster.y);
 
         if (this.playerDeath == false) {
 
             this.physics.world.collide(this.player, this.tileGroup);
-            this.physics.world.collide(this.tileGroup, this.obstacleGroup);
             this.physics.world.collide(this.player, this.obstacleGroup);
-            this.physics.world.collide(this.obstacleGroup, this.tileGroup);
             this.physics.world.collide(this.player, this.monster);
-
+            this.physics.add.overlap(this.player, this.obstacleGroup, this.blockdestory, null, this);
+        } else {
+            this.scene.start('GameOver');
         }
 
         if (this.timerScore > highScore) {
@@ -212,18 +220,7 @@ class Play extends Phaser.Scene {
             highScore = this.timerScore;
         }
 
-        if (this.player.body.touching.right) {
-
-            this.player.body.velocity.x = 200; // if player is stuck on the wall, they can escape
-            // this.playerMistake += 10; // if the player's right side touches any object, it counts as a mistake
-            //console.log(this.platformVelocity);   // test case
-
-        } else if (this.playerMistake > 0) {
-
-            this.playerMistake -= 1; // the playerMistake counter goes down when not in contact with a wall
-
-        }
-
+        this.playerMistake -= 1;
 
         if (this.playerMistake < 300) {
             this.monsterClose = false; // control monster spawns
@@ -232,6 +229,10 @@ class Play extends Phaser.Scene {
         }
 
         if (this.monsterClose == true) {
+            // this.time.delayedCall(
+            //     5000,
+            //     () => this.playerMistake = 200
+            // );
             this.monster.setX(16);
         } else if (this.monsterClose == false) {
             this.monster.setX(-256);
@@ -273,16 +274,21 @@ class Play extends Phaser.Scene {
         this.player.isGrounded = this.player.body.touching.down;
         // if so, we have jumps to spare
         if (this.player.isGrounded) {
-            //this.player.anims.play('walk', true);
+
+            this.player.body.offset.x =  32;            // sets the hitbox of the player while running
+            this.player.body.offset.y = 24;
+            this.player.body.width = 64;            
+            this.player.body.height = 96;
+
             this.player.on("animationcomplete", () => {
                 this.player.anims.play("run");
             })
+
             this.jumps = this.MAX_JUMPS;
             this.jumping = false;
             this.player.body.velocity.x = 0; // makes sure the player velocity is 0 when grounded
-        } else {
-            //this.player.anims.play('jump');
         }
+        
         // allow steady velocity change up to a certain key down duration
         // see: https://photonstorm.github.io/phaser3-docs/Phaser.Input.Keyboard.html#.DownDuration__anchor
         if (this.jumps > 0 && Phaser.Input.Keyboard.DownDuration(cursors.up, 250)) {
@@ -290,6 +296,11 @@ class Play extends Phaser.Scene {
             this.jumping = true;
             this.player.body.velocity.x = 100; // allows the player to move forward ONLY when jumping
             this.player.anims.play("jump");
+
+            this.player.body.offset.x =  32;            // sets the hitbox of the player while jumping
+            this.player.body.offset.y = 8;
+            this.player.body.width = 64;            
+            this.player.body.height = 112;
         }
         if (this.player.body.x >= game.config.width / 2) {
             this.player.body.velocity.x = 0; // stops the player from gaining momentum after reaching the halfway point of the screen
@@ -300,23 +311,25 @@ class Play extends Phaser.Scene {
             this.jumps--;
             this.jumping = false;
         }
-        // console.log(this.platformVelocity)
+        if (this.player.body.touching.right) {
+            this.player.body.velocity.x = 200; // if player is stuck on the wall, they can escape
+        }
     }
 
-
-    monstertouch() {
-        this.scene.start("GameOver");
+    setPlayerMistake(mistake) {
+        this.playerMistake = mistake;
     }
+
     blockdestory(player, obsticles) { //destory block when it is touch
 
         obsticles.destroy();
         this.destroy = true;
         this.playerMistake = 400;
-        this.player.x = this.player.x * 0.9; // here
-        this.SCROLL_SPEED = this.SCROLL_SPEED - 2;
-        this.time.delayedCall(600, () => {
-            this.SCROLL_SPEED = 5;
-        });
+        this.player.x = this.player.x * 0.9;    // here
+        // this.SCROLL_SPEED = this.SCROLL_SPEED - 2;
+        // this.time.delayedCall(600, () => {
+        //     this.SCROLL_SPEED = 5;
+        // });
         // console.log(this.SCROLL_SPEED)
 
     }
@@ -338,9 +351,7 @@ class Play extends Phaser.Scene {
         this.platformVelocity -= 100; // speeds up the map based on the timed Event in Create()
 
     }
-    delay() {
-        this.player.body.setSize(this.player.width - 100, this.player.height, true)
-    }
+
     timeIncrease() {
 
         this.timerScore += 1;
