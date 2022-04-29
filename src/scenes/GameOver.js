@@ -19,6 +19,16 @@ class GameOver extends Phaser.Scene {
             },
             fixedWidth: 0
         }
+        
+        this.SCROLL_SPEED = 5;
+        
+        this.BG2 = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'BG2').setOrigin(0);
+        this.BG3 = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'BG3').setOrigin(0);
+        this.BG1 = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'BG1').setOrigin(0);
+
+        this.BG2.tilePositionX += this.SCROLL_SPEED;
+        this.BG3.tilePositionX += this.SCROLL_SPEED + 1;
+
         keyENTER = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
         this.add.text(20,20,"This is game over",menuConfig).setOrigin(0,0);
         this.add.text(512, 288, "High Score: " + highScore, menuConfig).setOrigin(0.5, 0.5);
