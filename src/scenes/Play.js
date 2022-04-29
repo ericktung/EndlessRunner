@@ -47,7 +47,7 @@ class Play extends Phaser.Scene {
         this.BG3 = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'BG3').setOrigin(0).setDepth(1);
 
         // Difficulty variables
-        this.platformVelocity = -400;       // How fast the platforms move left across the screen
+        this.platformVelocity = -450;       // How fast the platforms move left across the screen
         this.spawnDifficulty = 100;          // percentage based obstacle spawner
         this.scaleDifficulty = 1;           // starts at level 1, improves over time
 
@@ -85,26 +85,27 @@ class Play extends Phaser.Scene {
         this.player.anims.play("run");
 
         // create monster
-        this.monster = this.physics.add.sprite(-256, 428, 'Obstacle');
+        this.monster = this.physics.add.sprite(-700, game.config.height - tileSize*8, 'monster');
         this.monster.setOrigin(0.5, 0.5);
         this.monster.setImmovable();
-        this.monster.setScale(4, 32);
+        this.monster.setScale(1.5, 1.5);
         this.monster.setDepth(10);
-        this.monster.enableBody();
+        this.monster.setSize(192, 288);
+        this.monster.body.offset.x = 128;  
+        this.monster.body.offset.y = 64;
+        this.monster.setRotation(-Math.PI / 12);
         this.monster.body.setAllowGravity(false);
         this.monsterClose = false;
-        this.monster.tint = 0xFFC700;
-
-        // basic physics
-        this.physics.add.collider(this.player, this.groundTile);
-        this.physics.add.overlap(this.player, this.monster, () => this.playerDeath = true, null, this);
 
         this.anims.create({
             key: "chomp",
             frames: this.anims.generateFrameNumbers("monster", { frames: [0, 1, 2, 3, 4, 5, 6, 7, 8] }),
             framerate: 8,
-            repeat: -1
+            repeat: -1,
+            repeatDelay: 1500
         });
+
+        this.monster.anims.play("chomp");
 
         this.obstacleList = [
             '32 x 32',
@@ -150,6 +151,10 @@ class Play extends Phaser.Scene {
             loop: true
         });
 
+        // basic collision physics
+        this.physics.add.collider(this.player, this.groundTile);
+        this.physics.add.overlap(this.player, this.monster, () => this.playerDeath = true, null, this);
+
         // Creates first platform
         this.time.delayedCall(500, () => {
             this.addPlatform();
@@ -160,50 +165,10 @@ class Play extends Phaser.Scene {
         this.obstacleGroup = this.add.group({ runChildUpdate: true });
     }
 
-    addPlatform() {
-
-        let platformX = game.config.width * 2;              // sets the X position of the platform on the right side of the screen
-        let platformY = Phaser.Math.Between(game.config.height / 2, game.config.height - tileSize);         // randomly generates a height for the platform
-
-        let slower = this.platformVelocity + 25;            // slightly randomizes platform speed
-        let faster = this.platformVelocity - 25;
-
-        let currentVelocity = Phaser.Math.Between(slower, faster);
-        
-        // create platform
-        let tileFloor = new Platform(
-            this,                       // scene
-            platformX,                  // X position
-            platformY,                  // Y position
-            'groundBlock',              // texture
-            currentVelocity);     // velocity
-
-        // add to tileGroup for collision physics
-        this.tileGroup.add(tileFloor);
-
-        let obstacleSelector = Math.floor(Math.random() * 4);       // randomizes selection of obstacles
-
-        // add box obstacles inside Platform
-        if (tileFloor.scaleX > 16) {                                              // decides if platform is long enough
-            if (Math.ceil(Math.random() * 100) < this.spawnDifficulty) {          // % chance to spawn obstacle
-                let genObstacle = new Obstacle(
-                    this, 
-                    Phaser.Math.Between(platformX + tileSize, (platformX + (tileSize * tileFloor.scaleX) - (tileSize * 6))),
-                    platformY - (tileSize * 3), 
-                    this.obstacleList[1],               // replace with obstacleSelector later
-                    currentVelocity);
-
-                this.obstacleGroup.add(genObstacle);
-            }
-        }
-    }
-
-
-
     update() {
 
-        console.log(this.playerObstacleOverlap);          // debug
-        console.log(this.playerMistake);
+        // console.log(this.playerObstacleOverlap);          // debug
+        // console.log(this.playerMistake);
 
         // background scroll (tweak for more "speed")
         this.BG2.tilePositionX += this.SCROLL_SPEED;
@@ -237,9 +202,14 @@ class Play extends Phaser.Scene {
         }
 
         if (this.monsterClose == true) {
-            this.monster.setX(16);
+            this.monster.setX(-10);
+
+            this.monster.body.offset.x =  128;          // updates the monster hitbox for every frame            
+            this.monster.body.offset.y = 64;
+            this.monster.body.width = 288;            
+            this.monster.body.height = 288;
         } else if (this.monsterClose == false) {
-            this.monster.setX(-256);
+            this.monster.setX(-700);
         }
 
         if (this.player.y >= game.config.height + 256 || this.player.x <= -128) {                            // world death bounds
@@ -296,6 +266,45 @@ class Play extends Phaser.Scene {
             this.player.body.velocity.x = 200;           // if player is stuck on the wall, they can escape
         }
     }
+
+    addPlatform() {
+
+        let platformX = game.config.width * 2;              // sets the X position of the platform on the right side of the screen
+        let platformY = Phaser.Math.Between(game.config.height / 2, game.config.height - tileSize);         // randomly generates a height for the platform
+
+        let slower = this.platformVelocity + 25;            // slightly randomizes platform speed
+        let faster = this.platformVelocity - 25;
+
+        let currentVelocity = Phaser.Math.Between(slower, faster);
+        
+        // create platform
+        let tileFloor = new Platform(
+            this,                       // scene
+            platformX,                  // X position
+            platformY,                  // Y position
+            'groundBlock',              // texture
+            currentVelocity);     // velocity
+
+        // add to tileGroup for collision physics
+        this.tileGroup.add(tileFloor);
+
+        let obstacleSelector = Math.floor(Math.random() * 4);       // randomizes selection of obstacles
+
+        // add box obstacles inside Platform
+        if (tileFloor.scaleX > 16) {                                              // decides if platform is long enough
+            if (Math.ceil(Math.random() * 100) < this.spawnDifficulty) {          // % chance to spawn obstacle
+                let genObstacle = new Obstacle(
+                    this, 
+                    Phaser.Math.Between(platformX + tileSize, (platformX + (tileSize * tileFloor.scaleX) - (tileSize * 6))),
+                    platformY - (tileSize * 3), 
+                    this.obstacleList[1],               // replace with obstacleSelector later
+                    currentVelocity);
+
+                this.obstacleGroup.add(genObstacle);
+            }
+        }
+    }
+
 
     blockDestroy(player, obstacles) {                    //destory block when it is touch 
 
