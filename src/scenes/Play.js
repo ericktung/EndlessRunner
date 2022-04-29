@@ -58,7 +58,7 @@ class Play extends Phaser.Scene {
         this.groundTile.setImmovable(true);
         this.groundTile.body.setAllowGravity(false);
         this.groundTile.setFriction(0);
-        this.groundTile.setDepth(0);
+        this.groundTile.setDepth(8);
         this.groundTile.tint = 0xF73D6E;
 
         // create player
@@ -203,8 +203,8 @@ class Play extends Phaser.Scene {
 
     update() {
 
-        console.log(this.playerMistake);          // debug
-        console.log(this.player.x, this.player.y);
+        console.log(this.playerObstacleOverlap);          // debug
+        console.log(this.playerMistake);
 
         // background scroll (tweak for more "speed")
         this.BG2.tilePositionX += this.SCROLL_SPEED;
@@ -213,15 +213,22 @@ class Play extends Phaser.Scene {
         if (this.playerDeath == false) {
             this.physics.world.collide(this.player, this.tileGroup);
             this.physics.world.collide(this.player, this.monster);
-            this.playerObstacleOverlap = this.physics.add.overlap(this.player, this.obstacleGroup, () => this.playerMistake = 1000, null, this);
+            this.physics.add.overlap(
+                this.player, 
+                this.obstacleGroup, 
+                () => {this.playerMistake = 1000; this.playerObstacleOverlap = true}, 
+                null, 
+                this);
         } else {
             this.scene.start('GameOver');
         }
 
+        // highscore setter
         if (this.timerScore > highScore) {
             highScore = this.timerScore;
         }
 
+        // permanent updating variables
         this.playerMistake -= 1;            // playerMistake always going down
 
         if (this.playerMistake < 0) {
@@ -240,11 +247,13 @@ class Play extends Phaser.Scene {
                 this.scene.start("GameOver"); 
         }
 
-        // check if player is grounded
-        this.player.isGrounded = this.player.body.touching.down;
+        // Jumping and collision logic with obstacles
+        if(!this.player.body.touching.right) {
+            this.playerObstacleOverlap = false;
+        }
 
-        if (this.player.isGrounded) {
-
+        if (this.player.body.touching.down && !this.playerObstacleOverlap) {
+            
             this.player.body.offset.x =  32;            // sets the hitbox of the player while running
             this.player.body.offset.y = 24;
             this.player.body.width = 64;            
@@ -253,13 +262,12 @@ class Play extends Phaser.Scene {
             this.player.on("animationcomplete", () => {
                 this.player.anims.play("run");
             })
-
             // player recieves a jump only when they have touched the floor
             this.jumps = this.MAX_JUMPS;
             this.jumping = false;
             this.player.body.velocity.x = 0; // makes sure the player velocity is 0 when grounded (prevents sliding)
         }
-        
+
         // allow steady velocity change up to a certain key down duration
         // see: https://photonstorm.github.io/phaser3-docs/Phaser.Input.Keyboard.html#.DownDuration__anchor
         if (this.jumps > 0 && Phaser.Input.Keyboard.DownDuration(cursors.up, 250)) {
@@ -273,15 +281,18 @@ class Play extends Phaser.Scene {
             this.player.body.width = 64;            
             this.player.body.height = 112;
         }
+        
         if (this.player.body.x >= game.config.width / 2) {
             this.player.body.velocity.x = 0;            // stops the player from gaining momentum after reaching the halfway point of the screen
         }
+        
         // finally, letting go of the UP key subtracts a jump
         // see: https://photonstorm.github.io/phaser3-docs/Phaser.Input.Keyboard.html#.UpDuration__anchor
         if (this.jumping && Phaser.Input.Keyboard.UpDuration(cursors.up)) {
             this.jumps--;
             this.jumping = false;
         }
+        
         if (this.player.body.touching.right && !this.playerObstacleOverlap) {
             this.player.body.velocity.x = 200;           // if player is stuck on the wall, they can escape
         }
