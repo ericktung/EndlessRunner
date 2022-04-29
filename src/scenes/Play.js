@@ -17,9 +17,7 @@ class Play extends Phaser.Scene {
         this.MAX_JUMPS = 1;
         this.jumps = 1;
         this.SCROLL_SPEED = 5;
-        this.counter = 0;
         this.physics.world.gravity.y = 2600;
-        this.spawntime = 0
         cursors = this.input.keyboard.createCursorKeys();
 
         // create background
@@ -74,7 +72,6 @@ class Play extends Phaser.Scene {
         this.monster.body.offset.y = 64;
         this.monster.setRotation(-Math.PI / 12);
         this.monster.body.setAllowGravity(false);
-        this.monsterClose = false;
         this.anims.create({
             key: "chomp",
             frames: this.anims.generateFrameNumbers("monster", { frames: [0, 1, 2, 3, 4, 5, 6, 7, 8] }),
@@ -121,7 +118,7 @@ class Play extends Phaser.Scene {
         this.scoreText = this.add.text(game.config.width - tileSize * 16, tileSize * 4, "Score: " + this.timerScore, scoreConfig);
         this.scoreText.setDepth(4)
 
-        this.jumpsText = this.add.text(0 + tileSize * 16, tileSize * 4, "jumps: " + this.jumps, scoreConfig);
+        this.jumpsText = this.add.text(0 + tileSize * 16, tileSize * 4, "Jumps: " + this.jumps, scoreConfig);
 
         this.timerScore = 0;
         this.time.addEvent({
@@ -160,7 +157,6 @@ class Play extends Phaser.Scene {
     update() {
 
         //console.log(this.playerDanger);          // debug
-        //console.log(this.monsterClose);
 
         // background scroll (tweak for more "speed")
         this.BG2.tilePositionX += this.SCROLL_SPEED;
@@ -198,13 +194,11 @@ class Play extends Phaser.Scene {
         this.monster.body.height = 288;
 
         if (this.playerMistake < 0) {
-            this.monsterClose = false; // control monster spawns
             this.playerDanger = false;
         } else {
-            this.monsterClose = true;
         }
         
-        if (this.monsterClose == false){
+        if (this.playerDanger == false){
             this.monster.setX(-700);
         }
 
