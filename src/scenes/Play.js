@@ -42,9 +42,9 @@ class Play extends Phaser.Scene {
         cursors = this.input.keyboard.createCursorKeys();
 
         // create background
-        this.BG1 = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'BG1').setOrigin(0);
-        this.BG2 = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'BG2').setOrigin(0);
-        this.BG3 = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'BG3').setOrigin(0);
+        this.BG1 = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'BG1').setOrigin(0).setDepth(2);
+        this.BG2 = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'BG2').setOrigin(0).setDepth(0);
+        this.BG3 = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'BG3').setOrigin(0).setDepth(1);
 
         // Difficulty variables
         this.platformVelocity = -400;       // How fast the platforms move left across the screen
@@ -67,7 +67,7 @@ class Play extends Phaser.Scene {
         this.playerMistake = 0;
         this.playerDeath = false;
         this.player.setSize(64, 128);
-        this.player.setDepth(2);
+        this.player.setDepth(10);
         this.playerObstacleOverlap = false;
 
         this.anims.create({
@@ -90,7 +90,7 @@ class Play extends Phaser.Scene {
         this.monster.setOrigin(0.5, 0.5);
         this.monster.setImmovable();
         this.monster.setScale(4, 32);
-        this.monster.setDepth(2);
+        this.monster.setDepth(10);
         this.monster.enableBody();
         this.monster.body.setAllowGravity(false);
         this.monsterClose = false;
@@ -238,11 +238,6 @@ class Play extends Phaser.Scene {
 
         if (this.player.y >= game.config.height + 256 || this.player.x <= -128) {                            // world death bounds
                 this.scene.start("GameOver"); 
-        }
-
-        //vanish block
-        if (this.blockV.x < 0) {
-            this.blockV.x = game.config.width;
         }
 
         // check if player is grounded

@@ -19,7 +19,7 @@ class Platform extends Phaser.Physics.Arcade.Sprite {
         this.scaleY = Math.ceil(Math.random() * 24);
 
         this.setScale(this.scaleX, this.scaleY);        // Randomizes size of rectangle (subject to tweaking)
-        this.setDepth(0);
+        this.setDepth(8);
 
         this.length = length;
         this.playerEnd = true;      // old variables

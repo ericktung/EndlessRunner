@@ -12,7 +12,7 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite {
         this.setVelocityX(velocity);
 
         this.setScale(3);        // Randomizes size of obstacle (subject to tweaking)
-        this.setDepth(1);
+        this.setDepth(9);
 
         this.playerPass = true;
     }
