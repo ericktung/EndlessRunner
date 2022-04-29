@@ -16,7 +16,7 @@ let config = {
         }
        
     },
-    scene: [ Menu , Play, GameOver ]
+    scene: [ Load , Menu , Controls , Play, GameOver ]
   
 }
 

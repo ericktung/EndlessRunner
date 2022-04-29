@@ -3,10 +3,8 @@ class Menu extends Phaser.Scene {
     constructor() {
         super("menuScene");
     }
-    preload(){
-        this.load.image("cutscene", "./asset/cutscene.png"); 
-    }
- create(){
+
+    create(){
     this.SCROLL_SPEED = 1;
     let menuConfig = {
         fontFamily: 'Ruluko',
@@ -22,34 +20,38 @@ class Menu extends Phaser.Scene {
 
     this.add.image(0,0, 'cutscene').setOrigin(0);
 
-
-    this.BG2.tint = 0x5EC39D;
-
+    keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
     keyENTER = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
     this.add.text(20,game.config.height/2+100, "HEART ♥ BREAKOUT", menuConfig);
     menuConfig.fontSize = "30px";
     this.play = this.add.text(20,game.config.height/2+180,"Press Enter to play",menuConfig).setOrigin(0,0);
+    this.intro = this.add.text(20, game.config.height/2 + 240, 'Press (UP) for more info', menuConfig).setOrigin(0, 0);
+    
     var timer = this.time.addEvent({
         delay: 500,                // ms
         callback: () => {
-            this.play.alpha = 0
+            this.play.alpha = 0;
+            this.intro.alpha = 0;
         },
         loop: true
     });
     this.time.addEvent({
         delay: 1000,                // ms
         callback: () => {
-            this.play.alpha = 1
+            this.play.alpha = 1;
+            this.intro.alpha = 1;
         },
         loop: true
     });
 }
  
- update(){
+    update(){
     if(Phaser.Input.Keyboard.JustDown(keyENTER)){
         this.scene.start("playScene");    
     }
-    
+    if (Phaser.Input.Keyboard.JustDown(keyUP)) {
+        this.scene.start('controlScene');
+    }
 }
 }
 

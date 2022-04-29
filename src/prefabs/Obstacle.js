@@ -30,9 +30,5 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite {
         if (this.getTopRight.x < -10){
             this.destroy();
         }
-        if (this.getTopRight.x < game.config.width / 3 && this.playerPass) {
-            this.playerPass = false;
-            this.scene.addObstacle();
-        }
 }
 }

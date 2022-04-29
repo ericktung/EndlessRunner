@@ -5,31 +5,10 @@ class Play extends Phaser.Scene {
         super("playScene");
     }
 
-    preload() {
-        this.load.path = './asset/';                //set path to asset.
-        this.load.image("BG1", 'BG1.png');
-        this.load.image("BG2", 'BG2.png');
-        this.load.image("BG3", 'BG3.png');
-        this.load.image("Obstacle", "Obstacle.png");
-        this.load.image('groundBlock', 'groundBlock.png');
-        this.load.image('Bouquet', 'bouquet.png');
-        this.load.image('heartSpikes', 'heartSpikes.png');
-
-        this.load.spritesheet("runner", "runner-sheet.png", {
-            frameWidth: 128,
-            frameHeight: 128
-        });
-        this.load.spritesheet("monster", "lover-sheet.png", {
-            frameWidth: 384,
-            frameHeight: 384
-        });
-    }
 
     create() {
         // initialize input keys
         keyENTER = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
-        keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
-        keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
         keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
 
@@ -49,7 +28,7 @@ class Play extends Phaser.Scene {
         this.BG3 = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'BG3').setOrigin(0).setDepth(1);
 
         // Difficulty variables
-        this.platformVelocity = -400;       // How fast the platforms move left across the screen
+        this.platformVelocity = -500;       // How fast the platforms move left across the screen
         this.spawnDifficulty = 30;          // percentage based obstacle spawner
         this.scaleDifficulty = 1;           // starts at level 1, improves over time
 
