@@ -26,7 +26,7 @@ class Play extends Phaser.Scene {
         this.BG3 = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'BG3').setOrigin(0).setDepth(1);
 
         // Difficulty variables
-        this.platformVelocity = -500;       // How fast the platforms move left across the screen
+        this.platformVelocity = -550;       // How fast the platforms move left across the screen
         this.spawnDifficulty = 30;          // percentage based obstacle spawner
         this.scaleDifficulty = 1;           // starts at level 1, improves over time
 
@@ -97,7 +97,7 @@ class Play extends Phaser.Scene {
 
         this.time.addEvent({
             delay: 45000,
-            callback: () => {this.scaleDifficulty += 1},
+            callback: () => {this.difficultyUP;},
             callbackScope: this,
             loop: true
         })
@@ -167,25 +167,6 @@ class Play extends Phaser.Scene {
             highScore = this.timerScore;
         }
 
-        if (this.scaleDifficulty == 1)  {
-            this.BG2.tint = 0x5EC39D;
-            this.spawnDifficulty = 30;
-        } else if (this.scaleDifficulty == 2) {
-            this.BG1.tint = 0x00001D;
-            this.BG2.tint = 0x71CED2;
-            this.spawnDifficulty = 40;
-        } else if (this.scaleDifficulty == 3) {
-            this.BG2.tint = 0x440BD4;
-            this.spawnDifficulty = 50;
-        } else if (this.scaleDifficulty >= 4) {
-            this.BG2.tint = 0xF53E6E;
-            this.spawnDifficulty = 60;
-        } 
-
-        if (this.playerDeath == true) {
-            this.scene.start("GameOver");
-        }
-
         // permanent updating variables
         this.playerMistake -= 1;            // playerMistake always going down
         this.monster.body.offset.x =  128;          // updates the monster hitbox for every frame            
@@ -194,15 +175,10 @@ class Play extends Phaser.Scene {
         this.monster.body.height = 288;
 
         if (this.playerMistake < 0) {
-            this.playerDanger = false;
-        } else {
-        }
-        
-        if (this.playerDanger == false){
             this.monster.setX(-700);
-        }
+            }
 
-        if (this.player.y >= game.config.height + 256 || this.player.x <= -128) {                            // world death bounds
+        if (this.player.y >= game.config.height + 256 || this.player.x <= -128 || this.playerDeath == true) {                            // world death bounds
                 this.scene.start("GameOver"); 
         }
 
@@ -273,7 +249,6 @@ class Play extends Phaser.Scene {
             this,                       // scene
             platformX,                  // X position
             platformY,                  // Y position
-            'groundBlock',              // texture
             this.scaleDifficulty,       // platform color
             currentVelocity);     // velocity
 
@@ -300,16 +275,34 @@ class Play extends Phaser.Scene {
         this.cameras.main.shake(250);
 
         this.obstacleLogic.active = false;
-        this.monster.setX(-10);
         this.playerMistake = 1500;
         this.playerObstacleOverlap = true;
+
         if (this.playerDanger == true) {
             this.monster.setX(this.player.x - 150);
         } else {
             this.playerDanger = true;
+            this.monster.setX(-10);
         }
         this.time.delayedCall(1000, () => {this.obstacleLogic.active = true});
 
+    }
+
+    difficultyUP() {
+        this.scaleDifficulty += 1;
+
+
+        if (this.scaleDifficulty == 2) {
+            this.BG1.tint = 0x00001D;
+            this.BG2.tint = 0x71CED2;
+            this.spawnDifficulty = 40;
+        } else if (this.scaleDifficulty == 3) {
+            this.BG2.tint = 0x440BD4;
+            this.spawnDifficulty = 50;
+        } else if (this.scaleDifficulty >= 4) {
+            this.BG2.tint = 0xF53E6E;
+            this.spawnDifficulty = 60;
+        } 
     }
 
     timeIncrease() {

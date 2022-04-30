@@ -1,15 +1,14 @@
 class Platform extends Phaser.Physics.Arcade.Sprite {
-    constructor(scene, x, y, texture, difficulty,velocity) {
+    constructor(scene, x, y, difficulty, velocity) {
 
         // Creates rectangle with randomized X and Y
         // Spawns rectangle slightly off screen to the right, note the setOrigin(0.1, 0)
-        super(scene, x, y, texture, difficulty, velocity).setOrigin(0.1, 0);
+        super(scene, x, y, 'groundBlock').setOrigin(0.1, 0);
 
         scene.add.existing(this);
         scene.physics.add.existing(this);
 
-        this.setTexture(texture);       // sets physics variables
-        this.setVelocityX(velocity);
+        this.setVelocityX(velocity);        // sets physics variables
         this.setImmovable(true);
         this.body.setAllowGravity(false);
         this.setFriction(0);
@@ -21,7 +20,6 @@ class Platform extends Phaser.Physics.Arcade.Sprite {
         this.setScale(this.scaleX, this.scaleY);        // Randomizes size of rectangle (subject to tweaking)
         this.setDepth(8);
 
-        this.length = length;
         this.playerEnd = true;      // old variables
 
         this.colorList1 = [
