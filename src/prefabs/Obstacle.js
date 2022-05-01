@@ -30,5 +30,9 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite {
         if (this.getTopRight.x < -10){
             this.destroy();
         }
+        if (playerDeath == true) {
+            this.body.moves = false;
+        }
+        
 }
 }

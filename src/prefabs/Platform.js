@@ -136,6 +136,10 @@ class Platform extends Phaser.Physics.Arcade.Sprite {
             this.playerEnd = false;         // recursively calls function to permanentaly spawn platforms
             this.scene.addPlatform();
         }
+
+        if (playerDeath == true) {
+            this.body.moves = false;
+        }
     }
     
     

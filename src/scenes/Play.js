@@ -44,42 +44,58 @@ class Play extends Phaser.Scene {
         this.player.setOrigin(0.5, 0.5);
         this.playerMistake = 0;
         this.playerDanger = false;
-        this.playerDeath = false;
+        playerDeath = false;
         this.player.setSize(64, 128);
         this.player.setDepth(10);
         this.playerObstacleOverlap = false;
+
         this.anims.create({
             key: "run",
-            frames: this.anims.generateFrameNumbers("runner", { frames: [0, 1, 2, 3, 4, 5, 6, 7] }),
+            frames: this.anims.generateFrameNames("runner", {
+                prefix: "run", start: 1, end: 8
+            }),
             frameRate: 12,
             repeat: -1
-        })
+        });
+
         this.anims.create({
             key: "jump",
-            frames: this.anims.generateFrameNumbers("runner", { frames: [9, 10, 10, 9] }),
-            frameRate: 8
+            frames: this.anims.generateFrameNames("runner", {
+                prefix: "jump", start: 1, end: 4
+            }),
+            frameRate: 8,
+            repeat: 0
         })
+
         this.player.anims.play("run");
 
         // create monster and animations
-        this.monster = this.physics.add.sprite(-700, game.config.height - tileSize*8, 'monster');
+        this.monster = this.physics.add.sprite(-700, game.config.height/2, 'monster');
         this.monster.setOrigin(0.5, 0.5);
         this.monster.setImmovable();
-        this.monster.setScale(1.5, 1.5);
+        //this.monster.setScale(1.5, 1.5);
         this.monster.setDepth(10);
-        this.monster.setSize(192, 288);
+        //this.monster.setSize(192, 288);
         this.monster.body.offset.x = 128;  
         this.monster.body.offset.y = 64;
-        this.monster.setRotation(-Math.PI / 12);
+        //this.monster.setRotation(-Math.PI / 12);
         this.monster.body.setAllowGravity(false);
+
+        this.anims.create({
+            key: "idle",
+            frames: this.anims.generateFrameNumbers("monster", { frames: [0, 1, 2, 3, 4, 5, 6, 7, 8, 0, 3, 4, 5, 6, 7, 8, 0] }),
+            frameRate: 12,
+            repeat: -1
+        });
+
         this.anims.create({
             key: "chomp",
-            frames: this.anims.generateFrameNumbers("monster", { frames: [0, 1, 2, 3, 4, 5, 6, 7, 8] }),
-            framerate: 8,
-            repeat: -1,
-            repeatDelay: 1500
-        });
-        this.monster.anims.play("chomp");
+            frames: this.anims.generateFrameNumbers("monster", {frames: [1, 2, 3]}),
+            frameRate: 12,
+            repeat: -1
+        })
+
+        this.monster.anims.play("idle");
 
         this.obstacleList = {
             'heartSpikes': 2,           // the Y multiplier we need to 'place' the obstacle on the floor
@@ -105,8 +121,8 @@ class Play extends Phaser.Scene {
         // score and time configs
         let scoreConfig = {
             fontFamily: 'Ruluko',
-            fontSize: '28px',
-            color: 'white',
+            fontSize: '18px',
+            color: '#f96b45',
             align: 'left',
             padding: {
                 top: 5,
@@ -115,23 +131,29 @@ class Play extends Phaser.Scene {
             fixedWidth: 0
         }
 
-        this.scoreText = this.add.text(game.config.width - tileSize * 16, tileSize * 4, "Score: " + this.timerScore, scoreConfig);
-        this.scoreText.setDepth(4)
+        this.scoreBox = this.add.sprite(game.config.width - tileSize*8, tileSize * 4, "scorebox").setOrigin(0.5, 0.5);
+        this.scoreBox.setDepth(4);
 
-        this.jumpsText = this.add.text(0 + tileSize * 16, tileSize * 4, "Jumps: " + this.jumps, scoreConfig).setDepth(4);
+        this.add.text(game.config.width - tileSize *8, tileSize * 3, "SCORE", scoreConfig).setOrigin(0.5).setDepth(5);
+        scoreConfig.fontSize = "28px";
+        this.scoreText = this.add.text(game.config.width - tileSize *8, tileSize * 4.5, this.timerScore, scoreConfig).setOrigin(0.5);
+        this.scoreText.setDepth(5);
 
         this.timerScore = 0;
-        this.time.addEvent({
-            delay: 100,
-            callback: this.timeIncrease,                // score display, 1 point every 100ms right now
-            callbackScope: this,
-            loop: true
-        });
+        if (playerDeath != true) {
+            this.scoreChange = this.time.addEvent({
+                delay: 100,
+                callback: this.timeIncrease,                // score display, 1 point every 100ms right now
+                callbackScope: this,
+                loop: true
+            });
 
-        // Creates first platform
-        this.time.delayedCall(500, () => {
-            this.addPlatform();
-        });
+             // Creates first platform
+            this.time.delayedCall(500, () => {
+                this.addPlatform();
+            });
+        }
+
 
         // basic groups for platform and obstacle generation
         this.tileGroup = this.add.group({ runChildUpdate: true });
@@ -143,7 +165,7 @@ class Play extends Phaser.Scene {
         this.physics.add.overlap(
             this.player, 
             this.monster, 
-            () => this.playerDeath = true, 
+            () => playerDeath = true, 
             null, 
             this);
         this.obstacleLogic = this.physics.add.overlap(
@@ -157,10 +179,12 @@ class Play extends Phaser.Scene {
     update() {
 
         //console.log(this.playerDanger);          // debug
-
-        // background scroll (tweak for more "speed")
-        this.BG2.tilePositionX += this.SCROLL_SPEED;
-        this.BG3.tilePositionX += this.SCROLL_SPEED + 1;
+        if (playerDeath != true) {
+            // background scroll (tweak for more "speed")
+            this.BG2.tilePositionX += this.SCROLL_SPEED;
+            this.BG3.tilePositionX += this.SCROLL_SPEED + 1;
+        }
+        
 
         // highscore setter
         if (this.timerScore > highScore) {
@@ -175,12 +199,17 @@ class Play extends Phaser.Scene {
         this.monster.body.height = 288;
 
         if (this.playerMistake < 0) {
+            this.tweens.add({
+                targets: this.monster,
+                x: -700,
+                ease: "Power2"
+            })
             this.playerDanger = false;
-            this.monster.setX(-700);
+            //this.monster.setX(-700);
             }
 
-        if (this.player.y >= game.config.height + 256 || this.player.x <= -128 || this.playerDeath == true) {                            // world death bounds
-                this.scene.start("GameOver"); 
+        if (this.player.y >= game.config.height + 256 || this.player.x <= -128 || playerDeath == true) {                            // world death bounds
+            this.gameEnd();
         }
 
         // Jumping and collision logic with obstacles
@@ -200,7 +229,6 @@ class Play extends Phaser.Scene {
             })
             // player recieves a jump only when they have touched the floor
             this.jumps = this.MAX_JUMPS;
-            this.jumpsText.setText('Jumps:' + this.jumps);
             this.jumping = false;
             this.player.body.velocity.x = 0; // makes sure the player velocity is 0 when grounded (prevents sliding)
         }
@@ -227,7 +255,6 @@ class Play extends Phaser.Scene {
         // see: https://photonstorm.github.io/phaser3-docs/Phaser.Input.Keyboard.html#.UpDuration__anchor
         if (this.jumping && Phaser.Input.Keyboard.UpDuration(cursors.up)) {
             this.jumps--;
-            this.jumpsText.setText('Jumps:' + this.jumps);
             this.jumping = false;
         }
         
@@ -273,19 +300,36 @@ class Play extends Phaser.Scene {
     }
 
     playerInDanger() {
-        this.cameras.main.shake(250);
-
+        if (playerDeath != true) {
+            this.cameras.main.shake(250);
+        }
         this.obstacleLogic.active = false;
-        this.playerMistake = 1500;
+        this.playerMistake = 500;
         this.playerObstacleOverlap = true;
 
         if (this.playerDanger == true) {
-            this.monster.setX(this.player.x - 150);
+            // second lunge at runner
+            this.gameEnd();
         } else {
             this.playerDanger = true;
-            this.monster.setX(-10);
+            // first lunge at runner
+            this.tweens.add({
+                targets: this.monster,
+                x: -20,
+                ease: "Power4"
+            })
         }
         this.time.delayedCall(1000, () => {this.obstacleLogic.active = true});
+
+        // monster bounce
+        this.tweens.add({
+            targets: this.monster,
+            y: "+= 30",
+            duration: this.playerMistake*10,
+            ease: "Bounce",
+            repeat: -1,
+            yoyo: true
+        })
 
     }
 
@@ -309,8 +353,28 @@ class Play extends Phaser.Scene {
     timeIncrease() {
 
         this.timerScore += 1;
-        this.scoreText.setText('Score: ' + this.timerScore); // changes the score text to be updated every time function is called
+        this.scoreText.setText(this.timerScore); // changes the score text to be updated every time function is called
 
+    }
+
+    gameEnd() {
+        playerDeath = true;
+        this.SCROLL_SPEED = 0;
+        this.monster.anims.play("chomp");
+        this.player.body.moves = false;
+        this.player.anims.stop();
+        this.scoreChange.paused = true;
+        playerScore = this.timerScore;
+        this.cameras.main.fade(1800,0,0,0);
+        this.monsterLunge = this.tweens.add({
+            targets: this.monster,
+            x: this.player.x,
+            y: this.player.y,
+            ease: "Power4",
+            onComplete: () => {
+                this.scene.start("GameOver");
+            }
+        })
     }
 
 }

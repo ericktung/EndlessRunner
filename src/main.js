@@ -3,6 +3,8 @@ let currentScene = 0;
 const SCALE = 0.5;
 const tileSize = 16;
 let highScore = 0;
+let playerScore = 0;
+let playerDeath = false;
 
 let config = {
     type: Phaser.AUTO,
