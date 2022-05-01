@@ -17,7 +17,7 @@ class Play extends Phaser.Scene {
         this.MAX_JUMPS = 1;
         this.jumps = 1;
         this.SCROLL_SPEED = 5;
-        this.physics.world.gravity.y = 2600;
+        this.physics.world.gravity.y = 3500;
         cursors = this.input.keyboard.createCursorKeys();
 
         // create background
@@ -175,6 +175,7 @@ class Play extends Phaser.Scene {
         this.monster.body.height = 288;
 
         if (this.playerMistake < 0) {
+            this.playerDanger = false;
             this.monster.setX(-700);
             }
 
@@ -206,7 +207,7 @@ class Play extends Phaser.Scene {
 
         // allow steady velocity change up to a certain key down duration
         // see: https://photonstorm.github.io/phaser3-docs/Phaser.Input.Keyboard.html#.DownDuration__anchor
-        if (this.jumps > 0 && Phaser.Input.Keyboard.DownDuration(cursors.up, 250)) {
+        if (this.jumps > 0 && Phaser.Input.Keyboard.DownDuration(cursors.up, 300)) {
             this.player.body.velocity.y = this.JUMP_VELOCITY;
             this.jumping = true;
             this.player.body.velocity.x = 100;          // allows the player to move forward ONLY when jumping
