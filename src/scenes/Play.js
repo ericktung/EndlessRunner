@@ -70,7 +70,7 @@ class Play extends Phaser.Scene {
         this.monster.setSize(192, 288);
         this.monster.body.offset.x = 128;  
         this.monster.body.offset.y = 64;
-        this.monster.setRotation(-Math.PI / 12);
+        this.monster.setRotation(Math.PI / 12);
         this.monster.body.setAllowGravity(false);
         this.anims.create({
             key: "chomp",
@@ -239,7 +239,7 @@ class Play extends Phaser.Scene {
     addPlatform() {
 
         let platformX = game.config.width * 2;              // sets the X position of the platform on the right side of the screen
-        let platformY = Phaser.Math.Between(game.config.height / 2, game.config.height - tileSize);         // randomly generates a height for the platform
+        let platformY = Phaser.Math.Between(9, 17) * 32;         // randomly generates a height for the platform
 
         let slower = this.platformVelocity + 25;            // slightly randomizes platform speed
         let faster = this.platformVelocity - 25;
@@ -281,11 +281,13 @@ class Play extends Phaser.Scene {
 
         if (this.playerDanger == true) {
             this.monster.setX(this.player.x - 150);
+            this.monster.setY(this.player.y - 100);
         } else {
             this.playerDanger = true;
             this.monster.setX(-10);
+            this.monster.setY(128);
         }
-        this.time.delayedCall(1000, () => {this.obstacleLogic.active = true});
+        this.time.delayedCall(1500, () => {this.obstacleLogic.active = true});
 
     }
 
