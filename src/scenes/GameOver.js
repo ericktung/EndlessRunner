@@ -9,7 +9,7 @@ class GameOver extends Phaser.Scene {
             fontFamily: 'Ruluko',
             fontSize: '30px',
             backgroundImage: 'background',
-            color: '#f96b45',
+            color: 'white',
             align: 'center',
             padding: {
                 top: 5,
