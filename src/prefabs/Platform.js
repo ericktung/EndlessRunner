@@ -24,8 +24,8 @@ class Platform extends Phaser.Physics.Arcade.Sprite {
 
         this.colorList1 = [
             0xF73D6E,           // pink gradient
-            0xF50A49,           
-            0xC4083A,           
+            0xE80A5D,           
+            0xC4084A,           
             0xAB0733,           
             0x93062C,
             0x7A0524,

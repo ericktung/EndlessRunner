@@ -89,9 +89,10 @@ class Play extends Phaser.Scene {
 
         // create background
         this.BG1 = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'BG1').setOrigin(0).setDepth(2);
+        this.BG1.alpha = 0.75;
         this.BG2 = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'BG2').setOrigin(0).setDepth(0);
         this.BG3 = this.add.tileSprite(0, 0, game.config.width, game.config.height, 'BG3').setOrigin(0).setDepth(1);
-
+        
         // Difficulty variables
         this.platformVelocity = -550;       // How fast the platforms move left across the screen
         this.prevVelocity = 0;
@@ -466,14 +467,14 @@ class Play extends Phaser.Scene {
         this.scaleDifficulty += 1;          // platform velocity -45 each time also (event)
 
         if (this.scaleDifficulty == 2) {    // color change of background when difficulty increases
-            this.BG1.tint = 0x00001D;
-            this.BG2.tint = 0x71CED2;
+            //this.BG1.tint = 0x00001D;
+            this.BG2.tint = 0x91e3e7;
             this.spawnDifficulty = 40;
         } else if (this.scaleDifficulty == 3) {
-            this.BG2.tint = 0x440BD4;
+            this.BG2.tint = 0xb2d7ec;
             this.spawnDifficulty = 50;
         } else if (this.scaleDifficulty >= 4) {
-            this.BG2.tint = 0xF53E6E;
+            this.BG2.tint = 0xc9c9f7;
             this.spawnDifficulty = 60;
         } 
     }
