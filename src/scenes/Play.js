@@ -40,11 +40,11 @@ class Play extends Phaser.Scene {
         this.groundTile.tint = 0xF73D6E;
 
         // create player and animations
-        this.player = this.physics.add.sprite(256, game.config.height / 2 + tileSize, 'runner');
+        this.player = this.physics.add.sprite(256, game.config.height - 192, 'runner');
         this.player.setOrigin(0.5, 0.5);
         this.playerMistake = 0;
         this.playerDanger = false;
-        playerDeath = false;
+        this.playerDeath = false;
         this.player.setSize(64, 128);
         this.player.setDepth(10);
         this.playerObstacleOverlap = false;
@@ -76,8 +76,10 @@ class Play extends Phaser.Scene {
         //this.monster.setScale(1.5, 1.5);
         this.monster.setDepth(10);
         //this.monster.setSize(192, 288);
-        this.monster.body.offset.x = 128;  
+        this.monster.body.offset.x =  128;          // updates the monster hitbox for every frame            
         this.monster.body.offset.y = 64;
+        this.monster.body.width = 288;            
+        this.monster.body.height = 288;
         this.monster.setRotation(Math.PI / 12);
         this.monster.body.setAllowGravity(false);
 
@@ -140,7 +142,7 @@ class Play extends Phaser.Scene {
         this.scoreText.setDepth(5);
 
         this.timerScore = 0;
-        if (playerDeath != true) {
+        if (this.playerDeath != true) {
             this.scoreChange = this.time.addEvent({
                 delay: 100,
                 callback: this.timeIncrease,                // score display, 1 point every 100ms right now
@@ -165,7 +167,7 @@ class Play extends Phaser.Scene {
         this.physics.add.overlap(
             this.player, 
             this.monster, 
-            () => playerDeath = true, 
+            () => this.playerDeath = true, 
             null, 
             this);
         this.obstacleLogic = this.physics.add.overlap(
@@ -178,13 +180,7 @@ class Play extends Phaser.Scene {
 
     update() {
 
-        //console.log(this.playerDanger);          // debug
-        if (playerDeath != true) {
-            // background scroll (tweak for more "speed")
-            this.BG2.tilePositionX += this.SCROLL_SPEED;
-            this.BG3.tilePositionX += this.SCROLL_SPEED + 1;
-        }
-        
+        console.log(this.playerDanger);          // debug
 
         // highscore setter
         if (this.timerScore > highScore) {
@@ -193,23 +189,23 @@ class Play extends Phaser.Scene {
 
         // permanent updating variables
         this.playerMistake -= 1;            // playerMistake always going down
-        this.monster.body.offset.x =  128;          // updates the monster hitbox for every frame            
-        this.monster.body.offset.y = 64;
-        this.monster.body.width = 288;            
-        this.monster.body.height = 288;
+        
 
         if (this.playerMistake < 0) {
-            this.tweens.add({
-                targets: this.monster,
-                x: -700,
-                ease: "Power2"
-            })
+            // this.tweens.add({
+            //     targets: this.monster,
+            //     x: -700,
+            //     ease: "Power2"
+            // })
             this.playerDanger = false;
-            //this.monster.setX(-700);
+            this.monster.setX(-700);
             }
 
-        if (this.player.y >= game.config.height + 256 || this.player.x <= -128 || playerDeath == true) {                            // world death bounds
+        if (this.player.y >= game.config.height + 256 || this.player.x <= -128 || this.playerDeath == true) {                            // world death bounds
             this.gameEnd();
+        } else {
+            this.BG2.tilePositionX += this.SCROLL_SPEED;
+            this.BG3.tilePositionX += this.SCROLL_SPEED + 1;
         }
 
         // Jumping and collision logic with obstacles
@@ -300,32 +296,33 @@ class Play extends Phaser.Scene {
     }
 
     playerInDanger() {
-        if (playerDeath != true) {
-            this.cameras.main.shake(250);
-        }
+ 
         this.obstacleLogic.active = false;
-        this.playerMistake = 500;
+        this.playerMistake = 700;
         this.playerObstacleOverlap = true;
 
         if (this.playerDanger == true) {
-            this.monster.setX(this.player.x - 150);
-            this.monster.setY(this.player.y - 100);
+            this.playerDeath = true;
         } else {
+            this.cameras.main.shake(250);
             this.playerDanger = true;
+
+             // monster bounce
+            this.tweens.add({
+                targets: this.monster,
+                y: "+= 30",
+                duration: this.playerMistake*10,
+                ease: "Bounce",
+                repeat: -1,
+                yoyo: true
+            })
+
             this.monster.setX(-10);
             this.monster.setY(128);
         }
-        this.time.delayedCall(1500, () => {this.obstacleLogic.active = true});
+        this.time.delayedCall(1000, () => {this.obstacleLogic.active = true});
 
-        // monster bounce
-        this.tweens.add({
-            targets: this.monster,
-            y: "+= 30",
-            duration: this.playerMistake*10,
-            ease: "Bounce",
-            repeat: -1,
-            yoyo: true
-        })
+       
 
     }
 
@@ -354,7 +351,6 @@ class Play extends Phaser.Scene {
     }
 
     gameEnd() {
-        playerDeath = true;
         this.SCROLL_SPEED = 0;
         this.monster.anims.play("chomp");
         this.player.body.moves = false;
@@ -364,8 +360,8 @@ class Play extends Phaser.Scene {
         this.cameras.main.fade(1800,0,0,0);
         this.monsterLunge = this.tweens.add({
             targets: this.monster,
-            x: this.player.x,
-            y: this.player.y,
+            x: this.player.x - 75,
+            y: this.player.y - 75,
             ease: "Power4",
             onComplete: () => {
                 this.scene.start("GameOver");
