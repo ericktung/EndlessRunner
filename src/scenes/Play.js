@@ -27,11 +27,11 @@ class Play extends Phaser.Scene {
             loop: true 
         });
         if (playerMuted == false) {
+            this.bgm.mute = false;
+            this.loopbgm.mute = false;
+         } else {
             this.bgm.mute = true;
             this.loopbgm.mute = true;
-         } else {
-             this.bgm.mute = false;
-            this.loopbgm.mute = false;
          }
         //play start music
         this.bgm.play();
@@ -333,6 +333,9 @@ class Play extends Phaser.Scene {
             }
 
             this.player.anims.play("jump");
+            if (Phaser.Input.Keyboard.JustDown(keyUP)) {
+                this.shortJump.play();
+            }
             
 
             this.player.body.offset.x =  32;            // sets the hitbox of the player while jumping
@@ -342,9 +345,7 @@ class Play extends Phaser.Scene {
 
         }
 
-        if (Phaser.Input.Keyboard.JustDown(keyUP)) {
-            this.shortJump.play();
-        }
+        
         
         // finally, letting go of the UP key subtracts a jump
         // see: https://photonstorm.github.io/phaser3-docs/Phaser.Input.Keyboard.html#.UpDuration__anchor

@@ -34,14 +34,14 @@ class Controls extends Phaser.Scene {
         controlConfig.fontSize = 42;
         this.add.text(game.config.width/2, 128, 'Use the (UP) arrow to jump', controlConfig).setOrigin(0.5);
         controlConfig.fontSize = 28;
-        this.add.text(game.config.width/2, 160, 'Tap (UP) for a smaller jump', controlConfig).setOrigin(0.5);
-        this.add.text(game.config.width/2, 192, 'Hold (UP) for a larger jump', controlConfig).setOrigin(0.5);
+        this.add.text(game.config.width/2, 160, 'Tap (UP) for a small jump', controlConfig).setOrigin(0.5);
+        this.add.text(game.config.width/2, 192, 'Hold (UP) for a large jump', controlConfig).setOrigin(0.5);
         controlConfig.fontSize = 32;
         this.add.text(game.config.width/2, 264, 'Hitting obstacles will alert the monster', controlConfig).setOrigin(0.5);
         controlConfig.fontSize = 24;
         this.add.text(game.config.width/2, 292, 'Hitting another obstacle while the monster is on screen will result in your death', controlConfig).setOrigin(0.5);
 
-        this.add.text(game.config.width/2, 348, 'You can jump mid-air as long as you have a jump', controlConfig).setOrigin(0.5);
+        this.add.text(game.config.width/2, 348, 'Save your jump to jump mid-air', controlConfig).setOrigin(0.5);
         this.add.text(game.config.width/2, 372, 'Jump resets after landing on the ground', controlConfig).setOrigin(0.5);
 
         controlConfig.fontSize = 30;

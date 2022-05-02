@@ -33,11 +33,11 @@ class Menu extends Phaser.Scene {
         loop: true 
     });
     if (playerMuted == false) {
-       this.bgm.mute = true;
-       this.loopbgm.mute = true;
-    } else {
-        this.bgm.mute = false;
+       this.bgm.mute = false;
        this.loopbgm.mute = false;
+    } else {
+        this.bgm.mute = true;
+       this.loopbgm.mute = true;
     }
 
     this.bgm.play();
