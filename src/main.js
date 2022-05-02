@@ -19,7 +19,7 @@ let config = {
         }
        
     },
-    scene: [ Load , Menu , Controls , Play, GameOver ]
+    scene: [ Load , Menu , Controls , Play , GameOver ]
   
 }
 

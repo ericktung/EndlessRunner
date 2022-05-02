@@ -229,20 +229,18 @@ class Play extends Phaser.Scene {
 
     update() {
 
-        console.log(this.playerDanger);          // debug
+        // console.log(this.playerDanger);          // debug
 
         // highscore setter
         if (this.timerScore > highScore) {
             highScore = this.timerScore;
         }
 
-        // permanent updating variables
-        this.playerMistake -= 1;            // playerMistake always going down
+        this.playerMistake -= 1;            // playerMistake always going down, basically a timer
         
-
         if (this.playerMistake < 0) {
             this.tweens.add({
-                targets: this.monster,
+                targets: this.monster,      // if the player is no longer in danger, the monster moves back
                 x: -700,
                 ease: "Power2"
             })
@@ -260,6 +258,17 @@ class Play extends Phaser.Scene {
         if(!this.player.body.touching.right) {
             this.playerObstacleOverlap = false;
         }
+
+        // player position limits
+        if (this.playerSpeedUp == true) {
+            this.playerLimit = game.config.width / 2;
+        } else {
+            this.playerLimit = (game.config.width / 8) * 3;
+        }
+        if (this.player.body.x >= this.playerLimit) {
+            this.player.body.velocity.x = 0;            // stops the player from gaining momentum after reaching the halfway point of the screen
+        }
+        
 
         if (this.player.body.touching.down && !this.playerObstacleOverlap) {
             
@@ -279,7 +288,7 @@ class Play extends Phaser.Scene {
 
         // allow steady velocity change up to a certain key down duration
         // see: https://photonstorm.github.io/phaser3-docs/Phaser.Input.Keyboard.html#.DownDuration__anchor
-        if (this.jumps > 0 && Phaser.Input.Keyboard.DownDuration(cursors.up, 300)) {
+        if (this.jumps > 0 && Phaser.Input.Keyboard.DownDuration(cursors.up, 325)) {
             this.player.body.velocity.y = this.JUMP_VELOCITY;
             this.jumping = true;
             this.player.body.velocity.x = 100;          // allows the player to move forward ONLY when jumping
@@ -289,15 +298,7 @@ class Play extends Phaser.Scene {
             this.player.body.offset.y = 8;
             this.player.body.width = 64;            
             this.player.body.height = 120;
-        }
-        
-        if (this.playerSpeedUp == true) {
-            this.playerLimit = game.config.width / 2;
-        } else {
-            this.playerLimit = (game.config.width / 8) * 3;
-        }
-        if (this.player.body.x >= this.playerLimit) {
-            this.player.body.velocity.x = 0;            // stops the player from gaining momentum after reaching the halfway point of the screen
+
         }
         
         // finally, letting go of the UP key subtracts a jump
@@ -313,7 +314,7 @@ class Play extends Phaser.Scene {
 
         if(Phaser.Input.Keyboard.JustDown(keySPACE)) {
             if(this.bgm.mute == false) {
-                this.bgm.mute = true;
+                this.bgm.mute = true;                       // mute button
                 this.loopbgm.mute = true;
                 playerMuted = true;
             } else {
@@ -331,14 +332,14 @@ class Play extends Phaser.Scene {
 
         let slower = this.platformVelocity + 25;            // slightly randomizes platform speed
         let faster = this.platformVelocity - 25;
-        let currentVelocity = Phaser.Math.Between(slower, faster);
+        let currentVelocity = Phaser.Math.Between(slower, faster);      // parallax platforms
         
         // create platform
         let tileFloor = new Platform(
             this,                       // scene
             platformX,                  // X position
             platformY,                  // Y position
-            currentVelocity);     // velocity
+            currentVelocity);           // velocity
 
         this.tileGroup.add(tileFloor);
         let obstacleSelector = Math.floor(Math.random() * 3);       
@@ -348,7 +349,7 @@ class Play extends Phaser.Scene {
             if (Math.ceil(Math.random() * 100) < this.spawnDifficulty) {          // % chance to spawn obstacle
                 let genObstacle = new Obstacle(
                     this, 
-                    Phaser.Math.Between(platformX + tileSize * 2, (platformX + (tileSize * tileFloor.scaleX) - (tileSize * 6))),
+                    Phaser.Math.Between(platformX + tileSize * 2, (platformX + (tileSize * tileFloor.scaleX) - (tileSize * 5))),
                     platformY - (tileSize * this.obstacleList[Object.keys(this.obstacleList)[obstacleSelector]]),           
                     Object.keys(this.obstacleList)[obstacleSelector],                       // texture
                     currentVelocity);
@@ -367,8 +368,8 @@ class Play extends Phaser.Scene {
         this.playerMistake = 700;
         this.playerObstacleOverlap = true;
 
-        if (this.playerDanger == true) {
-            playerDeath = true;
+        if (this.playerDanger == true) {            // logic check if player has already hit an obstacle
+            playerDeath = true;                     // then the next one they hit will kill them
         } else {
             this.cameras.main.shake(250);
             this.playerDanger = true;
@@ -407,10 +408,9 @@ class Play extends Phaser.Scene {
     }
 
     difficultyUP() {
-        this.scaleDifficulty += 1;
+        this.scaleDifficulty += 1;          // platform velocity -45 each time also (event)
 
-
-        if (this.scaleDifficulty == 2) {
+        if (this.scaleDifficulty == 2) {    // color change of background when difficulty increases
             this.BG1.tint = 0x00001D;
             this.BG2.tint = 0x71CED2;
             this.spawnDifficulty = 40;
@@ -427,9 +427,8 @@ class Play extends Phaser.Scene {
 
         this.timerScore += 1;
         this.scoreText.setText(this.timerScore); // changes the score text to be updated every time function is called
-
-        
     }
+    
     onEvent(){
         this.bgm.stop();
         this.loopbgm.play();
