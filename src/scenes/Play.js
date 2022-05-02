@@ -90,6 +90,7 @@ class Play extends Phaser.Scene {
         playerDeath = false;
         this.playerSpeedUp = false;
         this.playerLimit = (game.config.width / 8) * 3;
+        this.playerCanMove = true;
 
         this.anims.create({
             key: "run",
@@ -265,8 +266,12 @@ class Play extends Phaser.Scene {
         } else {
             this.playerLimit = (game.config.width / 8) * 3;
         }
+
         if (this.player.body.x >= this.playerLimit) {
+            this.playerCanMove = false;
             this.player.body.velocity.x = 0;            // stops the player from gaining momentum after reaching the halfway point of the screen
+        } else {
+            this.playerCanMove = true;
         }
         
 
@@ -291,7 +296,11 @@ class Play extends Phaser.Scene {
         if (this.jumps > 0 && Phaser.Input.Keyboard.DownDuration(cursors.up, 325)) {
             this.player.body.velocity.y = this.JUMP_VELOCITY;
             this.jumping = true;
-            this.player.body.velocity.x = 100;          // allows the player to move forward ONLY when jumping
+
+            if(this.playerCanMove == true) {
+                this.player.body.velocity.x = 100;          // allows the player to move forward ONLY when jumping and only before the position limits
+            }
+            
             this.player.anims.play("jump");
 
             this.player.body.offset.x =  32;            // sets the hitbox of the player while jumping
