@@ -150,8 +150,8 @@ class Play extends Phaser.Scene {
         };
 
         this.time.addEvent({
-            delay: 10000,
-            callback: () => {this.platformVelocity -= 25}, // speeds up the map every 10 seconds
+            delay: 15000,
+            callback: () => {this.platformVelocity -= 20}, // speeds up the map every 10 seconds
             callbackScope: this,
             loop: true
         });
