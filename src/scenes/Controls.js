@@ -37,8 +37,8 @@ class Controls extends Phaser.Scene {
         this.add.text(game.config.width/2, 372, 'Jump resets after landing on the ground', controlConfig).setOrigin(0.5);
 
         controlConfig.fontSize = 30;
-        this.play = this.add.text(20,game.config.height/2+180,"Press (ENTER) to play", controlConfig).setOrigin(0,0);
-        this.intro = this.add.text(20, game.config.height/2 + 240, 'Press (UP) to return to menu', controlConfig).setOrigin(0, 0);
+        this.play = this.add.text(20,game.config.height/2+180,"Press (UP) to play", controlConfig).setOrigin(0,0);
+        this.intro = this.add.text(20, game.config.height/2 + 240, 'Press (ENTER) to return to menu', controlConfig).setOrigin(0, 0);
         
         this.time.addEvent({
             delay: 500,                // ms
@@ -58,10 +58,10 @@ class Controls extends Phaser.Scene {
         }); 
     }
     update() {
-        if(Phaser.Input.Keyboard.JustDown(keyENTER)){
+        if(Phaser.Input.Keyboard.JustDown(keyUP)){
             this.scene.start("playScene");    
         }
-        if (Phaser.Input.Keyboard.JustDown(keyUP)) {
+        if (Phaser.Input.Keyboard.JustDown(keyENTER)) {
             this.scene.start('menuScene');
         }
     }

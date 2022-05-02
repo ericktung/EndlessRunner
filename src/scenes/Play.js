@@ -90,6 +90,7 @@ class Play extends Phaser.Scene {
         playerDeath = false;
         this.playerSpeedUp = false;
         this.playerLimit = (game.config.width / 8) * 3;
+        this.playerCanMove = true;
 
         this.anims.create({
             key: "run",
@@ -175,6 +176,7 @@ class Play extends Phaser.Scene {
             fixedWidth: 0
         }
 
+        this.scoreMultipler = 1;
         this.scoreBox = this.add.sprite(game.config.width - tileSize*8, tileSize * 4, "scorebox").setOrigin(0.5, 0.5);
         this.scoreBox.setDepth(4);
 
@@ -229,7 +231,7 @@ class Play extends Phaser.Scene {
 
     update() {
 
-        // console.log(this.playerDanger);          // debug
+        console.log(this.timerScore);          // debug
 
         // highscore setter
         if (this.timerScore > highScore) {
@@ -265,8 +267,12 @@ class Play extends Phaser.Scene {
         } else {
             this.playerLimit = (game.config.width / 8) * 3;
         }
+
         if (this.player.body.x >= this.playerLimit) {
+            this.playerCanMove = false;
             this.player.body.velocity.x = 0;            // stops the player from gaining momentum after reaching the halfway point of the screen
+        } else {
+            this.playerCanMove = true;
         }
         
 
@@ -291,7 +297,11 @@ class Play extends Phaser.Scene {
         if (this.jumps > 0 && Phaser.Input.Keyboard.DownDuration(cursors.up, 325)) {
             this.player.body.velocity.y = this.JUMP_VELOCITY;
             this.jumping = true;
-            this.player.body.velocity.x = 100;          // allows the player to move forward ONLY when jumping
+
+            if(this.playerCanMove == true) {
+                this.player.body.velocity.x = 100;          // allows the player to move forward ONLY when jumping and only before the position limits
+            }
+
             this.player.anims.play("jump");
 
             this.player.body.offset.x =  32;            // sets the hitbox of the player while jumping
@@ -404,7 +414,12 @@ class Play extends Phaser.Scene {
 
             this.SCROLL_SPEED = 6;
             this.time.delayedCall(5000, () => {this.SCROLL_SPEED = 5; this.player.body.velocity.x -= 100; this.playerSpeedUp = false;});
-        }
+
+            this.scoreMultiplier = 2;
+            this.time.delayedCall(5000, () => {this.scoreMultiplier = 1});
+        } 
+            
+        
     }
 
     difficultyUP() {
@@ -425,7 +440,7 @@ class Play extends Phaser.Scene {
 
     timeIncrease() {
 
-        this.timerScore += 1;
+        this.timerScore += this.scoreMultipler;
         this.scoreText.setText(this.timerScore); // changes the score text to be updated every time function is called
     }
     
