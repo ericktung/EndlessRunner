@@ -20,21 +20,36 @@ class Menu extends Phaser.Scene {
 
     this.add.image(0,0, 'cutscene').setOrigin(0);
     //play music
-    this.bgm = this.sound.add('StartMusic', { 
-        mute: false,
-        volume: 0.5,
-        rate: 1,
-        loop: false 
-    });
-    this.loopbgm = this.sound.add('LoopMusic', { 
-        mute: false,
-        volume: 0.5,
-        rate: 1,
-        loop: true 
-    });
+    if (playerMuted == false) {
+        this.bgm = this.sound.add('StartMusic', { 
+            mute: false,
+            volume: 0.5,
+            rate: 1,
+            loop: false 
+        });
+        this.loopbgm = this.sound.add('LoopMusic', { 
+            mute: false,
+            volume: 0.5,
+            rate: 1,
+            loop: true 
+        });
+    } else {
+        this.bgm = this.sound.add('StartMusic', { 
+            mute: true,
+            volume: 0.5,
+            rate: 1,
+            loop: false 
+        });
+        this.loopbgm = this.sound.add('LoopMusic', { 
+            mute: true,
+            volume: 0.5,
+            rate: 1,
+            loop: true 
+        });
+    }
+
     this.bgm.play();
     var timedEvent = this.time.addEvent({delay: 54000, callback: this.onEvent, callbackScope:this, loop: false});
-
 
     // key input
     keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
@@ -81,9 +96,11 @@ class Menu extends Phaser.Scene {
         }
         if(Phaser.Input.Keyboard.JustDown(keySPACE)) {
             if(this.bgm.mute == false) {
+                playerMuted = true;
                 this.bgm.mute = true;
                 this.loopbgm.mute = true;
             } else {
+                playerMuted = false;
                 this.bgm.mute = false;
                 this.loopbgm.mute = false;
             }

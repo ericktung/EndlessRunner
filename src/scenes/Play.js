@@ -14,19 +14,33 @@ class Play extends Phaser.Scene {
 
         //music part
         //create start music
-        this.bgm = this.sound.add('StartMusic', { 
-            mute: false,
-            volume: 0.5,
-            rate: 1,
-            loop: false 
-        });
-        //create loop music
-        this.loopbgm = this.sound.add('LoopMusic', { 
-            mute: false,
-            volume: 0.5,
-            rate: 1,
-            loop: true 
-        });
+        if (playerMuted == false) {
+            this.bgm = this.sound.add('StartMusic', { 
+                mute: false,
+                volume: 0.5,
+                rate: 1,
+                loop: false 
+            });
+            this.loopbgm = this.sound.add('LoopMusic', { 
+                mute: false,
+                volume: 0.5,
+                rate: 1,
+                loop: true 
+            });
+        } else {
+            this.bgm = this.sound.add('StartMusic', { 
+                mute: true,
+                volume: 0.5,
+                rate: 1,
+                loop: false 
+            });
+            this.loopbgm = this.sound.add('LoopMusic', { 
+                mute: true,
+                volume: 0.5,
+                rate: 1,
+                loop: true 
+            });
+        }
         //play start music
         this.bgm.play();
         //play the loop music once the startmusic ends.
@@ -296,14 +310,16 @@ class Play extends Phaser.Scene {
         if (this.player.body.touching.right && !this.playerObstacleOverlap) {
             this.player.body.velocity.x = 200;           // if player is stuck on the wall, they can escape
         }
-        
+
         if(Phaser.Input.Keyboard.JustDown(keySPACE)) {
             if(this.bgm.mute == false) {
                 this.bgm.mute = true;
                 this.loopbgm.mute = true;
+                playerMuted = true;
             } else {
                 this.bgm.mute = false;
                 this.loopbgm.mute = false;
+                playerMuted = false;
             }
         }
     }
@@ -322,7 +338,6 @@ class Play extends Phaser.Scene {
             this,                       // scene
             platformX,                  // X position
             platformY,                  // Y position
-            this.scaleDifficulty,       // platform color
             currentVelocity);     // velocity
 
         this.tileGroup.add(tileFloor);

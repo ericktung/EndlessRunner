@@ -1,5 +1,5 @@
 class Platform extends Phaser.Physics.Arcade.Sprite {
-    constructor(scene, x, y, difficulty, velocity) {
+    constructor(scene, x, y, velocity) {
 
         // Creates rectangle with randomized X and Y
         // Spawns rectangle slightly off screen to the right, note the setOrigin(0.1, 0)
@@ -24,109 +24,46 @@ class Platform extends Phaser.Physics.Arcade.Sprite {
 
         this.colorList1 = [
             0xF73D6E,           // pink gradient
-            0xEA3061,           
-            0xDE2455,           
-            0xD11748,           
-            0xB7002E            
+            0xF50A49,           
+            0xC4083A,           
+            0xAB0733,           
+            0x93062C,
+            0x7A0524,
+            0x62041D,
+            0x490316,
+            0x31020F            
         ];
 
-        this.colorList2 = [
-            0x980000,
-            0x7F0000,           // red gradient
-            0x650000,
-            0x4C0000,
-            0x320000
-        ];
-
-        this.colorList3 = [
-            0x368F00,
-            0x1D7600,           // green gradient
-            0x035C00,
-            0x004300,
-            0x003900
-        ];
-
-        this.colorList4 = [
-            0x5CCACB,           // teal gradient
-            0x43B1B2,
-            0x299798,
-            0x107E7F,
-            0x006465
-        ];
-
-        if (difficulty == 1) {
-            if (y <= 332) {
-                this.tint = this.colorList1[0];
-            }
-            if (y > 332 && y <= 400) {
-                this.tint = this.colorList1[1];
-            }
-            if (y > 400 && y <= 464) {
-                this.tint = this.colorList1[2];
-            }
-            if (y > 464 && y <= 528) {
-                this.tint = this.colorList1[3];
-            }
-            if (y > 528) {
-                this.tint = this.colorList1[4];
-            }
+  
+        if (y == 288) {
+            this.tint = this.colorList1[0];
         }
-
-        if (difficulty == 2) {
-            if (y <= 332) {
-                this.tint = this.colorList2[0];
-            }
-            if (y > 332 && y <= 400) {
-                this.tint = this.colorList2[1];
-            }
-            if (y > 400 && y <= 464) {
-                this.tint = this.colorList2[2];
-            }
-            if (y > 464 && y <= 528) {
-                this.tint = this.colorList2[3];
-            }
-            if (y > 528) {
-                this.tint = this.colorList2[4];
-            }
+        if (y == 320) {
+            this.tint = this.colorList1[1];
         }
-
-        if (difficulty == 3) {
-            if (y <= 332) {
-                this.tint = this.colorList3[0];
-            }
-            if (y > 332 && y <= 400) {
-                this.tint = this.colorList3[1];
-            }
-            if (y > 400 && y <= 464) {
-                this.tint = this.colorList3[2];
-            }
-            if (y > 464 && y <= 528) {
-                this.tint = this.colorList3[3];
-            }
-            if (y > 528) {
-                this.tint = this.colorList3[4];
-            }
+        if (y == 352) {
+            this.tint = this.colorList1[2];
+        }
+        if (y == 384) {
+            this.tint = this.colorList1[3];
+        }
+        if (y == 416) {
+            this.tint = this.colorList1[4];
+        }
+        if (y == 448) {
+            this.tint = this.colorList1[5];
+        }
+        if (y == 480) {
+            this.tint = this.colorList1[6];
+        }
+        if (y == 512) {
+            this.tint = this.colorList1[7];
+        }
+        if (y == 544) {
+            this.tint = this.colorList1[8];
         }
         
-        if (difficulty >= 4) {
-            if (y <= 332) {
-                this.tint = this.colorList4[0];
-            }
-            if (y > 332 && y <= 400) {
-                this.tint = this.colorList4[1];
-            }
-            if (y > 400 && y <= 464) {
-                this.tint = this.colorList4[2];
-            }
-            if (y > 464 && y <= 528) {
-                this.tint = this.colorList4[3];
-            }
-            if (y > 528) {
-                this.tint = this.colorList4[4];
-            }
-        }
-
-    }
+}
     update() {
 
         if (this.getTopRight.x < 0) {       // destroys rectangle once the last pixel of it reaches the left of the screen

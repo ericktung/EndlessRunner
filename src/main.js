@@ -5,6 +5,7 @@ const tileSize = 16;
 let highScore = 0;
 let playerScore = 0;
 let playerDeath = false;
+let playerMuted = false;
 
 let config = {
     type: Phaser.AUTO,
