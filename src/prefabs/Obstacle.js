@@ -21,6 +21,7 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite {
         }
         if (texture == 'heartSpikes') {
             this.setScale(1, 0.5);
+            this.setSize(48, 32);
         }
         if (texture == 'speedBox') {
             this.setScale(0.75);

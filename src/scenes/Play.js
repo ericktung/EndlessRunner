@@ -176,7 +176,7 @@ class Play extends Phaser.Scene {
             fixedWidth: 0
         }
 
-        this.scoreMultipler = 1;
+        
         this.scoreBox = this.add.sprite(game.config.width - tileSize*8, tileSize * 4, "scorebox").setOrigin(0.5, 0.5);
         this.scoreBox.setDepth(4);
 
@@ -185,6 +185,7 @@ class Play extends Phaser.Scene {
         this.scoreText = this.add.text(game.config.width - tileSize *8, tileSize * 4.5, this.timerScore, scoreConfig).setOrigin(0.5);
         this.scoreText.setDepth(5);
 
+        this.scoreMultipler = 1;
         this.timerScore = 0;
         if (playerDeath != true) {
             this.scoreChange = this.time.addEvent({
