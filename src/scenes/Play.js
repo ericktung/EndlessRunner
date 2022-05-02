@@ -76,7 +76,7 @@ class Play extends Phaser.Scene {
         this.groundTile.setImmovable(true);
         this.groundTile.body.setAllowGravity(false);
         this.groundTile.setFriction(0);
-        this.groundTile.setDepth(8);
+        this.groundTile.setDepth(10);
         this.groundTile.tint = 0xF73D6E;
 
         // create player and animations
@@ -85,7 +85,7 @@ class Play extends Phaser.Scene {
         this.playerMistake = 0;
         this.playerDanger = false;
         this.player.setSize(64, 128);
-        this.player.setDepth(10);
+        this.player.setDepth(15);
         this.playerObstacleOverlap = false;
         playerDeath = false;
         this.playerSpeedUp = false;
@@ -117,7 +117,7 @@ class Play extends Phaser.Scene {
         this.monster.setOrigin(0.5, 0.5);
         this.monster.setImmovable();
         //this.monster.setScale(1.5, 1.5);
-        this.monster.setDepth(10);
+        this.monster.setDepth(15);
         //this.monster.setSize(192, 288);
         this.monster.body.offset.x =  128;          
         this.monster.body.offset.y = 64;

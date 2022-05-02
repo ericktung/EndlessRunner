@@ -18,7 +18,7 @@ class Platform extends Phaser.Physics.Arcade.Sprite {
         this.scaleY = Math.ceil(Math.random() * 24);
 
         this.setScale(this.scaleX, this.scaleY);        // Randomizes size of rectangle (subject to tweaking)
-        this.setDepth(8);
+
 
         this.playerEnd = true;      // old variables
 
@@ -37,30 +37,39 @@ class Platform extends Phaser.Physics.Arcade.Sprite {
   
         if (y == 288) {
             this.tint = this.colorList1[0];
+            this.setDepth(5);
         }
         if (y == 320) {
             this.tint = this.colorList1[1];
+            this.setDepth(6);
         }
         if (y == 352) {
             this.tint = this.colorList1[2];
+            this.setDepth(7);
         }
         if (y == 384) {
             this.tint = this.colorList1[3];
+            this.setDepth(8);
         }
         if (y == 416) {
             this.tint = this.colorList1[4];
+            this.setDepth(9);
         }
         if (y == 448) {
             this.tint = this.colorList1[5];
+            this.setDepth(10);
         }
         if (y == 480) {
             this.tint = this.colorList1[6];
+            this.setDepth(11);
         }
         if (y == 512) {
             this.tint = this.colorList1[7];
+            this.setDepth(12);
         }
         if (y == 544) {
             this.tint = this.colorList1[8];
+            this.setDepth(13);
         }
         
 }
