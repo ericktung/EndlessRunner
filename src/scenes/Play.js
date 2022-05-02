@@ -12,6 +12,26 @@ class Play extends Phaser.Scene {
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
         keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
 
+        //music part
+        //create start music
+        this.bgm = this.sound.add('StartMusic', { 
+            mute: false,
+            volume: 1,
+            rate: 1,
+            loop: false 
+        });
+        //create loop music
+        this.loopbgm = this.sound.add('LoopMusic', { 
+            mute: false,
+            volume: 1,
+            rate: 1,
+            loop: true 
+        });
+        //play start music
+        this.bgm.play();
+        //play the loop music once the startmusic ends.
+        var timedEvent = this.time.addEvent({delay: 54000, callback: this.onEvent, callbackScope:this, loop: false});
+
         // basic physics variables
         this.JUMP_VELOCITY = -700;
         this.MAX_JUMPS = 1;
@@ -378,11 +398,18 @@ class Play extends Phaser.Scene {
         this.timerScore += 1;
         this.scoreText.setText(this.timerScore); // changes the score text to be updated every time function is called
 
+        
+    }
+    onEvent(){
+        this.bgm.stop();
+        this.loopbgm.play();
     }
 
     gameEnd() {
         this.SCROLL_SPEED = 0;
         this.monster.anims.play("chomp");
+        this.bgm.stop();
+        this.loopbgm.stop();
         this.player.body.moves = false;
         this.player.anims.stop();
         this.scoreChange.paused = true;
