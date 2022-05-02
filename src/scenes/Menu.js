@@ -36,8 +36,11 @@ class Menu extends Phaser.Scene {
     var timedEvent = this.time.addEvent({delay: 54000, callback: this.onEvent, callbackScope:this, loop: false});
 
 
+    // key input
     keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
     keyENTER = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+
+    // menu text
     this.add.text(20,game.config.height/2+100, "HEART ♥ BREAKOUT", menuConfig);
     menuConfig.fontSize = "30px";
     this.play = this.add.text(20,game.config.height/2+180,"Press (ENTER) to play",menuConfig).setOrigin(0,0);

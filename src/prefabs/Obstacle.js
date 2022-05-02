@@ -13,13 +13,17 @@ class Obstacle extends Phaser.Physics.Arcade.Sprite {
         this.setDepth(9);
         
         if (texture == 'Bouquet') {
-            this.setScale(0.75);
+            this.setScale(0.625);
+            this.setSize(64, 64);
+        
+        // this.body.width = 64;            
+        // this.body.height = 64;
         }
         if (texture == 'heartSpikes') {
             this.setScale(1, 0.5);
         }
-        if (texture == 'Obstacle') {
-            this.setScale(3);
+        if (texture == 'speedBox') {
+            this.setScale(0.75);
         }
         
         this.playerPass = true;

@@ -19,6 +19,7 @@ class Load extends Phaser.Scene {
         this.load.image('groundBlock', 'groundBlock.png');
         this.load.image('Bouquet', 'bouquet.png');
         this.load.image('heartSpikes', 'heartSpikes.png');
+        this.load.image('speedBox', 'speedBox.png');
 
         this.load.atlas("runner", "atlas/runner-atlas.png", "atlas/runner-atlas.json");
 

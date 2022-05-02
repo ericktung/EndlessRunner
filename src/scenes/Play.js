@@ -64,10 +64,10 @@ class Play extends Phaser.Scene {
         this.player.setOrigin(0.5, 0.5);
         this.playerMistake = 0;
         this.playerDanger = false;
-        this.playerDeath = false;
         this.player.setSize(64, 128);
         this.player.setDepth(10);
         this.playerObstacleOverlap = false;
+        playerDeath = false;
 
         this.anims.create({
             key: "run",
@@ -96,7 +96,7 @@ class Play extends Phaser.Scene {
         //this.monster.setScale(1.5, 1.5);
         this.monster.setDepth(10);
         //this.monster.setSize(192, 288);
-        this.monster.body.offset.x =  128;          // updates the monster hitbox for every frame            
+        this.monster.body.offset.x =  128;          
         this.monster.body.offset.y = 64;
         this.monster.body.width = 288;            
         this.monster.body.height = 288;
@@ -121,8 +121,8 @@ class Play extends Phaser.Scene {
 
         this.obstacleList = {
             'heartSpikes': 2,           // the Y multiplier we need to 'place' the obstacle on the floor
-            'Bouquet': 6,               
-            'Obstacle': 3,
+            'Bouquet': 5,               
+            'speedBox': 3,
             'placeholder 2': 1
         };
 
@@ -144,7 +144,7 @@ class Play extends Phaser.Scene {
         let scoreConfig = {
             fontFamily: 'Ruluko',
             fontSize: '18px',
-            color: '#f96b45',
+            color: 'white',
             align: 'left',
             padding: {
                 top: 5,
@@ -162,7 +162,7 @@ class Play extends Phaser.Scene {
         this.scoreText.setDepth(5);
 
         this.timerScore = 0;
-        if (this.playerDeath != true) {
+        if (playerDeath != true) {
             this.scoreChange = this.time.addEvent({
                 delay: 100,
                 callback: this.timeIncrease,                // score display, 1 point every 100ms right now
@@ -187,7 +187,7 @@ class Play extends Phaser.Scene {
         this.physics.add.overlap(
             this.player, 
             this.monster, 
-            () => this.playerDeath = true, 
+            () => playerDeath = true, 
             null, 
             this);
         this.obstacleLogic = this.physics.add.overlap(
@@ -212,16 +212,15 @@ class Play extends Phaser.Scene {
         
 
         if (this.playerMistake < 0) {
-            // this.tweens.add({
-            //     targets: this.monster,
-            //     x: -700,
-            //     ease: "Power2"
-            // })
+            this.tweens.add({
+                targets: this.monster,
+                x: -700,
+                ease: "Power2"
+            })
             this.playerDanger = false;
-            this.monster.setX(-700);
             }
 
-        if (this.player.y >= game.config.height + 256 || this.player.x <= -128 || this.playerDeath == true) {                            // world death bounds
+        if (this.player.y >= game.config.height + 256 || this.player.x <= -128 || playerDeath == true) {                            // world death bounds
             this.gameEnd();
         } else {
             this.BG2.tilePositionX += this.SCROLL_SPEED;
@@ -322,24 +321,29 @@ class Play extends Phaser.Scene {
         this.playerObstacleOverlap = true;
 
         if (this.playerDanger == true) {
-            this.playerDeath = true;
+            playerDeath = true;
         } else {
             this.cameras.main.shake(250);
             this.playerDanger = true;
 
-             // monster bounce
             this.tweens.add({
                 targets: this.monster,
-                y: "+= 30",
-                duration: this.playerMistake*10,
-                ease: "Bounce",
-                repeat: -1,
-                yoyo: true
+                x: -20,
+                ease: "Power4"
             })
 
             this.monster.setX(-10);
-            this.monster.setY(128);
+            this.monster.setY(192);
         }
+        // monster bounce
+        this.tweens.add({
+            targets: this.monster,
+            y: "+= 30",
+            duration: this.playerMistake*10,
+            ease: "Bounce",
+            repeat: -1,
+            yoyo: true
+        })
         this.time.delayedCall(1000, () => {this.obstacleLogic.active = true});
 
        
