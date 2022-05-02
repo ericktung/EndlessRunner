@@ -14,33 +14,25 @@ class Play extends Phaser.Scene {
 
         //music part
         //create start music
+        this.bgm = this.sound.add('StartMusic', { 
+            mute: false,
+            volume: 0.5,
+            rate: 1,
+            loop: false 
+        });
+        this.loopbgm = this.sound.add('LoopMusic', { 
+            mute: false,
+            volume: 0.5,
+            rate: 1,
+            loop: true 
+        });
         if (playerMuted == false) {
-            this.bgm = this.sound.add('StartMusic', { 
-                mute: false,
-                volume: 0.5,
-                rate: 1,
-                loop: false 
-            });
-            this.loopbgm = this.sound.add('LoopMusic', { 
-                mute: false,
-                volume: 0.5,
-                rate: 1,
-                loop: true 
-            });
-        } else {
-            this.bgm = this.sound.add('StartMusic', { 
-                mute: true,
-                volume: 0.5,
-                rate: 1,
-                loop: false 
-            });
-            this.loopbgm = this.sound.add('LoopMusic', { 
-                mute: true,
-                volume: 0.5,
-                rate: 1,
-                loop: true 
-            });
-        }
+            this.bgm.mute = true;
+            this.loopbgm.mute = true;
+         } else {
+             this.bgm.mute = false;
+            this.loopbgm.mute = false;
+         }
         //play start music
         this.bgm.play();
         //play the loop music once the startmusic ends.
@@ -49,7 +41,43 @@ class Play extends Phaser.Scene {
             callback: 
             this.onEvent,
             callbackScope:this, 
-            loop: false});
+            loop: false
+        });
+
+        this.longJump = this.sound.add('longJump', {
+            mute: false,
+            volume: 0.25,
+            rate: 1,
+            loop: false
+        });
+
+        this.shortJump = this.sound.add('shortJump', {
+            mute: false,
+            volume: 0.2,
+            rate: 4,
+            loop: false
+        });
+
+        this.speedBoxSound = this.sound.add('land', {
+            mute: false, 
+            volume: 0.5,
+            rate: 2,
+            loop: false
+        });
+
+        this.hitSound = this.sound.add('hit', {
+            mute: false,
+            volume: 0.5,
+            rate: 1,
+            loop: false
+        });
+
+        this.chomp = this.sound.add('chomp', {
+            mute: false,
+            volume: 0.5,
+            rate: 0.25,
+            loop: false
+        });
 
         // basic physics variables
         this.JUMP_VELOCITY = -700;
@@ -251,6 +279,7 @@ class Play extends Phaser.Scene {
             }
 
         if (this.player.y >= game.config.height + 256 || this.player.x <= -128 || playerDeath == true) {                            // world death bounds
+            
             this.gameEnd();
         } else {
             this.BG2.tilePositionX += this.SCROLL_SPEED;
@@ -304,12 +333,17 @@ class Play extends Phaser.Scene {
             }
 
             this.player.anims.play("jump");
+            
 
             this.player.body.offset.x =  32;            // sets the hitbox of the player while jumping
             this.player.body.offset.y = 8;
             this.player.body.width = 64;            
             this.player.body.height = 120;
 
+        }
+
+        if (Phaser.Input.Keyboard.JustDown(keyUP)) {
+            this.shortJump.play();
         }
         
         // finally, letting go of the UP key subtracts a jump
@@ -323,7 +357,7 @@ class Play extends Phaser.Scene {
             this.player.body.velocity.x = 200;           // if player is stuck on the wall, they can escape
         }
 
-        if(Phaser.Input.Keyboard.JustDown(keySPACE)) {
+        if (Phaser.Input.Keyboard.JustDown(keySPACE)) {
             if(this.bgm.mute == false) {
                 this.bgm.mute = true;                       // mute button
                 this.loopbgm.mute = true;
@@ -379,8 +413,11 @@ class Play extends Phaser.Scene {
         this.playerMistake = 700;
         this.playerObstacleOverlap = true;
 
+        this.hitSound.play();
+
         if (this.playerDanger == true) {            // logic check if player has already hit an obstacle
             playerDeath = true;                     // then the next one they hit will kill them
+            
         } else {
             this.cameras.main.shake(250);
             this.playerDanger = true;
@@ -409,6 +446,7 @@ class Play extends Phaser.Scene {
     hitSpeedObstacle() {
 
         if (this.playerSpeedUp == false) {
+            this.speedBoxSound.play();
             this.player.body.velocity.x += 100;
             this.playerSpeedUp = true;
             this.playerObstacleOverlap = true;
@@ -466,6 +504,7 @@ class Play extends Phaser.Scene {
             y: this.player.y - 75,
             ease: "Power4",
             onComplete: () => {
+                this.chomp.play();
                 this.scene.start("GameOver");
             }
         })

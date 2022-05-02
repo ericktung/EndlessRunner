@@ -4,6 +4,14 @@ class Controls extends Phaser.Scene {
     }
 
     create(){
+
+        this.UISound = this.sound.add('UI', {
+            mute: false,
+            volume: 0.5,
+            rate: 1,
+            loop: false
+        });
+
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
         keyENTER = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
 
@@ -59,9 +67,11 @@ class Controls extends Phaser.Scene {
     }
     update() {
         if(Phaser.Input.Keyboard.JustDown(keyUP)){
+            this.UISound.play();
             this.scene.start("playScene");    
         }
         if (Phaser.Input.Keyboard.JustDown(keyENTER)) {
+            this.UISound.play();
             this.scene.start('menuScene');
         }
     }
