@@ -59,8 +59,8 @@ class Menu extends Phaser.Scene {
     // menu text
     this.add.text(20,game.config.height/2+100, "HEART ♥ BREAKOUT", menuConfig);
     menuConfig.fontSize = "30px";
-    this.play = this.add.text(20,game.config.height/2+180,"Press (ENTER) to play",menuConfig).setOrigin(0,0);
-    this.intro = this.add.text(20, game.config.height/2 + 240, 'Press (UP) for more info', menuConfig).setOrigin(0, 0);
+    this.play = this.add.text(20,game.config.height/2+180,"Press (UP) to play",menuConfig).setOrigin(0,0);
+    this.intro = this.add.text(20, game.config.height/2 + 240, 'Press (ENTER) for more info', menuConfig).setOrigin(0, 0);
     this.mute = this.add.text(game.config.width / 5 * 3, game.config.height/2 + 240, 'Press (SPACE) to mute/unmute', menuConfig).setOrigin(0, 0);
     
     var timer = this.time.addEvent({
@@ -84,12 +84,12 @@ class Menu extends Phaser.Scene {
 }
  
     update(){
-        if(Phaser.Input.Keyboard.JustDown(keyENTER)){
+        if(Phaser.Input.Keyboard.JustDown(keyUP)){
             this.scene.start("playScene");
             this.bgm.stop();
             this.loopbgm.stop();
         }
-        if (Phaser.Input.Keyboard.JustDown(keyUP)) {
+        if (Phaser.Input.Keyboard.JustDown(keyENTER)) {
             this.scene.start('controlScene');
             this.bgm.stop();
             this.loopbgm.stop();
