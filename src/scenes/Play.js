@@ -27,6 +27,7 @@ class Play extends Phaser.Scene {
 
         // Difficulty variables
         this.platformVelocity = -550;       // How fast the platforms move left across the screen
+        this.prevVelocity = 0;
         this.spawnDifficulty = 30;          // percentage based obstacle spawner
         this.scaleDifficulty = 1;           // starts at level 1, improves over time
 
@@ -48,6 +49,8 @@ class Play extends Phaser.Scene {
         this.player.setDepth(10);
         this.playerObstacleOverlap = false;
         playerDeath = false;
+        this.playerSpeedUp = false;
+        this.playerLimit = (game.config.width / 8) * 3;
 
         this.anims.create({
             key: "run",
@@ -115,7 +118,7 @@ class Play extends Phaser.Scene {
 
         this.time.addEvent({
             delay: 45000,
-            callback: () => {this.difficultyUP;},
+            callback: this.difficultyUP,
             callbackScope: this,
             loop: true
         })
@@ -159,7 +162,8 @@ class Play extends Phaser.Scene {
 
         // basic groups for platform and obstacle generation
         this.tileGroup = this.add.group({ runChildUpdate: true });
-        this.obstacleGroup = this.add.group({ runChildUpdate: true });
+        this.damageObstacle = this.add.group({ runChildUpdate: true });
+        this.speedObstacle = this.add.group({ runChildUpdate: true });
 
         // basic collision physics
         this.physics.add.collider(this.player, this.groundTile);
@@ -172,8 +176,14 @@ class Play extends Phaser.Scene {
             this);
         this.obstacleLogic = this.physics.add.overlap(
             this.player, 
-            this.obstacleGroup, 
+            this.damageObstacle, 
             this.playerInDanger, 
+            null, 
+            this);
+        this.physics.add.overlap(
+            this.player, 
+            this.speedObstacle, 
+            this.hitSpeedObstacle, 
             null, 
             this);
     }
@@ -242,7 +252,12 @@ class Play extends Phaser.Scene {
             this.player.body.height = 120;
         }
         
-        if (this.player.body.x >= ((game.config.width / 8) * 3)) {
+        if (this.playerSpeedUp == true) {
+            this.playerLimit = game.config.width / 2;
+        } else {
+            this.playerLimit = (game.config.width / 8) * 3;
+        }
+        if (this.player.body.x >= this.playerLimit) {
             this.player.body.velocity.x = 0;            // stops the player from gaining momentum after reaching the halfway point of the screen
         }
         
@@ -275,10 +290,9 @@ class Play extends Phaser.Scene {
             this.scaleDifficulty,       // platform color
             currentVelocity);     // velocity
 
-        // add to tileGroup for collision physics
         this.tileGroup.add(tileFloor);
+        let obstacleSelector = Math.floor(Math.random() * 3);       
 
-        let obstacleSelector = Math.floor(Math.random() * 3);       // randomizes selection of obstacles
         // add box obstacles inside Platform
         if (tileFloor.scaleX > 16) {                                              // decides if platform is long enough
             if (Math.ceil(Math.random() * 100) < this.spawnDifficulty) {          // % chance to spawn obstacle
@@ -289,13 +303,16 @@ class Play extends Phaser.Scene {
                     Object.keys(this.obstacleList)[obstacleSelector],                       // texture
                     currentVelocity);
 
-                this.obstacleGroup.add(genObstacle);
+                if (obstacleSelector <= 1) {
+                    this.damageObstacle.add(genObstacle);
+                } else if (obstacleSelector == 2) {
+                    this.speedObstacle.add(genObstacle);
+                }
             }
         }
     }
 
     playerInDanger() {
- 
         this.obstacleLogic.active = false;
         this.playerMistake = 700;
         this.playerObstacleOverlap = true;
@@ -325,9 +342,18 @@ class Play extends Phaser.Scene {
             yoyo: true
         })
         this.time.delayedCall(1000, () => {this.obstacleLogic.active = true});
+    }
 
-       
+    hitSpeedObstacle() {
 
+        if (this.playerSpeedUp == false) {
+            this.player.body.velocity.x += 100;
+            this.playerSpeedUp = true;
+            this.playerObstacleOverlap = true;
+
+            this.SCROLL_SPEED = 6;
+            this.time.delayedCall(5000, () => {this.SCROLL_SPEED = 5; this.player.body.velocity.x -= 100; this.playerSpeedUp = false;});
+        }
     }
 
     difficultyUP() {
