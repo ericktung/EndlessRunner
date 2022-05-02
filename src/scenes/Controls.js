@@ -7,6 +7,7 @@ class Controls extends Phaser.Scene {
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
         keyENTER = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
 
+        
         let controlConfig = {
             fontFamily: 'Ruluko',
             fontSize: '50px',

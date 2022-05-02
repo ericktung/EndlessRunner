@@ -10,27 +10,32 @@ class Play extends Phaser.Scene {
         // initialize input keys
         keyENTER = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
         keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
-        keyDOWN = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
+        keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
         //music part
         //create start music
         this.bgm = this.sound.add('StartMusic', { 
             mute: false,
-            volume: 1,
+            volume: 0.5,
             rate: 1,
             loop: false 
         });
         //create loop music
         this.loopbgm = this.sound.add('LoopMusic', { 
             mute: false,
-            volume: 1,
+            volume: 0.5,
             rate: 1,
             loop: true 
         });
         //play start music
         this.bgm.play();
         //play the loop music once the startmusic ends.
-        var timedEvent = this.time.addEvent({delay: 54000, callback: this.onEvent, callbackScope:this, loop: false});
+        this.time.addEvent({
+            delay: 54000, 
+            callback: 
+            this.onEvent,
+            callbackScope:this, 
+            loop: false});
 
         // basic physics variables
         this.JUMP_VELOCITY = -700;
@@ -290,6 +295,16 @@ class Play extends Phaser.Scene {
         
         if (this.player.body.touching.right && !this.playerObstacleOverlap) {
             this.player.body.velocity.x = 200;           // if player is stuck on the wall, they can escape
+        }
+        
+        if(Phaser.Input.Keyboard.JustDown(keySPACE)) {
+            if(this.bgm.mute == false) {
+                this.bgm.mute = true;
+                this.loopbgm.mute = true;
+            } else {
+                this.bgm.mute = false;
+                this.loopbgm.mute = false;
+            }
         }
     }
 

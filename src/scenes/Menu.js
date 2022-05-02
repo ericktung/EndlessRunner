@@ -22,13 +22,13 @@ class Menu extends Phaser.Scene {
     //play music
     this.bgm = this.sound.add('StartMusic', { 
         mute: false,
-        volume: 1,
+        volume: 0.5,
         rate: 1,
         loop: false 
     });
     this.loopbgm = this.sound.add('LoopMusic', { 
         mute: false,
-        volume: 1,
+        volume: 0.5,
         rate: 1,
         loop: true 
     });
@@ -39,18 +39,21 @@ class Menu extends Phaser.Scene {
     // key input
     keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
     keyENTER = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+    keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
     // menu text
     this.add.text(20,game.config.height/2+100, "HEART ♥ BREAKOUT", menuConfig);
     menuConfig.fontSize = "30px";
     this.play = this.add.text(20,game.config.height/2+180,"Press (ENTER) to play",menuConfig).setOrigin(0,0);
     this.intro = this.add.text(20, game.config.height/2 + 240, 'Press (UP) for more info', menuConfig).setOrigin(0, 0);
+    this.mute = this.add.text(game.config.width / 5 * 3, game.config.height/2 + 240, 'Press (SPACE) to mute/unmute', menuConfig).setOrigin(0, 0);
     
     var timer = this.time.addEvent({
         delay: 500,                // ms
         callback: () => {
             this.play.alpha = 0;
             this.intro.alpha = 0;
+            this.mute.alpha = 0;
         },
         loop: true
     });
@@ -59,6 +62,7 @@ class Menu extends Phaser.Scene {
         callback: () => {
             this.play.alpha = 1;
             this.intro.alpha = 1;
+            this.mute.alpha = 1;
         },
         loop: true
     });
@@ -74,6 +78,15 @@ class Menu extends Phaser.Scene {
             this.scene.start('controlScene');
             this.bgm.stop();
             this.loopbgm.stop();
+        }
+        if(Phaser.Input.Keyboard.JustDown(keySPACE)) {
+            if(this.bgm.mute == false) {
+                this.bgm.mute = true;
+                this.loopbgm.mute = true;
+            } else {
+                this.bgm.mute = false;
+                this.loopbgm.mute = false;
+            }
         }
     }
     onEvent(){
