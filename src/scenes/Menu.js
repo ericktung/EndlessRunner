@@ -19,6 +19,22 @@ class Menu extends Phaser.Scene {
     }
 
     this.add.image(0,0, 'cutscene').setOrigin(0);
+    //play music
+    this.bgm = this.sound.add('StartMusic', { 
+        mute: false,
+        volume: 1,
+        rate: 1,
+        loop: false 
+    });
+    this.loopbgm = this.sound.add('LoopMusic', { 
+        mute: false,
+        volume: 1,
+        rate: 1,
+        loop: true 
+    });
+    this.bgm.play();
+    var timedEvent = this.time.addEvent({delay: 54000, callback: this.onEvent, callbackScope:this, loop: false});
+
 
     keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
     keyENTER = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
@@ -46,12 +62,18 @@ class Menu extends Phaser.Scene {
 }
  
     update(){
-    if(Phaser.Input.Keyboard.JustDown(keyENTER)){
-        this.scene.start("playScene");    
+        if(Phaser.Input.Keyboard.JustDown(keyENTER)){
+            this.scene.start("playScene");
+            this.bgm.stop();
+            this.loopbgm.stop();
+        }
+        if (Phaser.Input.Keyboard.JustDown(keyUP)) {
+            this.scene.start('controlScene');
+        }
     }
-    if (Phaser.Input.Keyboard.JustDown(keyUP)) {
-        this.scene.start('controlScene');
+    onEvent(){
+        this.bgm.stop();
+        this.loopbgm.play();
     }
-}
 }
 

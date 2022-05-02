@@ -22,6 +22,8 @@ class Load extends Phaser.Scene {
 
         this.load.atlas("runner", "atlas/runner-atlas.png", "atlas/runner-atlas.json");
 
+        this.load.audio("StartMusic", "endless_sfx.wav");
+        this.load.audio("LoopMusic", "endless_loop.wav");
         this.load.spritesheet("heart", "heart-sheet.png", {
             frameWidth: 32,
             frameHeight: 32
