@@ -35,11 +35,11 @@ p {
 }
 
 a {
-    color: #ffc860;
+    color: white;
     text-decoration: none;
 }
 a:hover {
-    color: #e15d5d;
+    color: #f73d6e;
 }
 
 #endless-runner {
